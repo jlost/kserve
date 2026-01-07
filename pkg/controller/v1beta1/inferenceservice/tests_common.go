@@ -201,6 +201,7 @@ func getExpectedIsvcStatus(serviceKey types.NamespacedName, protocol, host, comp
 		ModelStatus: v1beta1.ModelStatus{
 			TransitionStatus:    "InProgress",
 			ModelRevisionStates: &v1beta1.ModelRevisionStates{TargetModelState: "Pending"},
+			ModelCopies:         &v1beta1.ModelCopies{TotalCopies: 1},
 		},
 		DeploymentMode:     string(constants.RawDeployment),
 		ServingRuntimeName: "tf-serving-raw",
