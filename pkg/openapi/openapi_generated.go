@@ -7706,6 +7706,33 @@ func schema_pkg_apis_serving_v1beta1_ModelStatus(ref common.ReferenceCallback) c
 							Ref:         ref("github.com/kserve/kserve/pkg/apis/serving/v1beta1.ModelCopies"),
 						},
 					},
+					"supportedProtocols": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-type": "atomic",
+							},
+						},
+						SchemaProps: spec.SchemaProps{
+							Description: "All inference protocols supported by the serving runtime (e.g. [\"v2\", \"grpc-v2\"]). Consumers select a protocol from this list to construct endpoint paths.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
+					"modelName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The effective model name used in inference endpoint paths. Derived from container args, environment variables, or the InferenceService name.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 				Required: []string{"transitionStatus"},
 			},

@@ -140,6 +140,7 @@ func (p *Predictor) Reconcile(ctx context.Context, isvc *v1beta1.InferenceServic
 		if err != nil {
 			return ctrl.Result{}, err
 		}
+		p.populateProtocolStatus(isvc, sRuntime)
 	} else {
 		predContainer = predictor.GetContainer(isvc.ObjectMeta, isvc.Spec.Predictor.GetExtensions(), p.inferenceServiceConfig)
 		podSpec = corev1.PodSpec(isvc.Spec.Predictor.PodSpec)
@@ -150,6 +151,7 @@ func (p *Predictor) Reconcile(ctx context.Context, isvc *v1beta1.InferenceServic
 		} else {
 			podSpec.Containers[0] = *predContainer
 		}
+		isvc.Status.ModelStatus.ModelName = isvcutils.GetModelName(isvc)
 	}
 
 	// Add InferenceService name as environment variable to all containers
@@ -366,6 +368,11 @@ func (p *Predictor) reconcileModel(ctx context.Context, isvc *v1beta1.InferenceS
 	}
 
 	return sRuntime, nil
+}
+
+func (p *Predictor) populateProtocolStatus(isvc *v1beta1.InferenceService, sRuntime v1alpha1.ServingRuntimeSpec) {
+	isvc.Status.ModelStatus.SupportedProtocols = sRuntime.ProtocolVersions
+	isvc.Status.ModelStatus.ModelName = isvcutils.GetModelName(isvc)
 }
 
 func (p *Predictor) buildPodSpec(isvc *v1beta1.InferenceService, sRuntime v1alpha1.ServingRuntimeSpec) (corev1.PodSpec, error) {

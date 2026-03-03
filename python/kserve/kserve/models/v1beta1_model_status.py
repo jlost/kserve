@@ -47,20 +47,33 @@ class V1beta1ModelStatus(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'copies': 'V1beta1ModelCopies',
-        'last_failure_info': 'V1beta1FailureInfo',
-        'states': 'V1beta1ModelRevisionStates',
-        'transition_status': 'str'
+        "copies": "V1beta1ModelCopies",
+        "last_failure_info": "V1beta1FailureInfo",
+        "model_name": "str",
+        "states": "V1beta1ModelRevisionStates",
+        "supported_protocols": "list[str]",
+        "transition_status": "str",
     }
 
     attribute_map = {
-        'copies': 'copies',
-        'last_failure_info': 'lastFailureInfo',
-        'states': 'states',
-        'transition_status': 'transitionStatus'
+        "copies": "copies",
+        "last_failure_info": "lastFailureInfo",
+        "model_name": "modelName",
+        "states": "states",
+        "supported_protocols": "supportedProtocols",
+        "transition_status": "transitionStatus",
     }
 
-    def __init__(self, copies=None, last_failure_info=None, states=None, transition_status='', local_vars_configuration=None):  # noqa: E501
+    def __init__(
+        self,
+        copies=None,
+        last_failure_info=None,
+        model_name=None,
+        states=None,
+        supported_protocols=None,
+        transition_status="",
+        local_vars_configuration=None,
+    ):  # noqa: E501
         """V1beta1ModelStatus - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration()
@@ -68,7 +81,9 @@ class V1beta1ModelStatus(object):
 
         self._copies = None
         self._last_failure_info = None
+        self._model_name = None
         self._states = None
+        self._supported_protocols = None
         self._transition_status = None
         self.discriminator = None
 
@@ -76,8 +91,12 @@ class V1beta1ModelStatus(object):
             self.copies = copies
         if last_failure_info is not None:
             self.last_failure_info = last_failure_info
+        if model_name is not None:
+            self.model_name = model_name
         if states is not None:
             self.states = states
+        if supported_protocols is not None:
+            self.supported_protocols = supported_protocols
         self.transition_status = transition_status
 
     @property
@@ -123,6 +142,29 @@ class V1beta1ModelStatus(object):
         self._last_failure_info = last_failure_info
 
     @property
+    def model_name(self):
+        """Gets the model_name of this V1beta1ModelStatus.  # noqa: E501
+
+        The effective model name used in inference endpoint paths. Derived from container args, environment variables, or the InferenceService name.  # noqa: E501
+
+        :return: The model_name of this V1beta1ModelStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._model_name
+
+    @model_name.setter
+    def model_name(self, model_name):
+        """Sets the model_name of this V1beta1ModelStatus.
+
+        The effective model name used in inference endpoint paths. Derived from container args, environment variables, or the InferenceService name.  # noqa: E501
+
+        :param model_name: The model_name of this V1beta1ModelStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._model_name = model_name
+
+    @property
     def states(self):
         """Gets the states of this V1beta1ModelStatus.  # noqa: E501
 
@@ -144,6 +186,29 @@ class V1beta1ModelStatus(object):
         self._states = states
 
     @property
+    def supported_protocols(self):
+        """Gets the supported_protocols of this V1beta1ModelStatus.  # noqa: E501
+
+        All inference protocols supported by the serving runtime (e.g. [\"v2\", \"grpc-v2\"]). Consumers select a protocol from this list to construct endpoint paths.  # noqa: E501
+
+        :return: The supported_protocols of this V1beta1ModelStatus.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._supported_protocols
+
+    @supported_protocols.setter
+    def supported_protocols(self, supported_protocols):
+        """Sets the supported_protocols of this V1beta1ModelStatus.
+
+        All inference protocols supported by the serving runtime (e.g. [\"v2\", \"grpc-v2\"]). Consumers select a protocol from this list to construct endpoint paths.  # noqa: E501
+
+        :param supported_protocols: The supported_protocols of this V1beta1ModelStatus.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._supported_protocols = supported_protocols
+
+    @property
     def transition_status(self):
         """Gets the transition_status of this V1beta1ModelStatus.  # noqa: E501
 
@@ -163,8 +228,13 @@ class V1beta1ModelStatus(object):
         :param transition_status: The transition_status of this V1beta1ModelStatus.  # noqa: E501
         :type: str
         """
-        if self.local_vars_configuration.client_side_validation and transition_status is None:  # noqa: E501
-            raise ValueError("Invalid value for `transition_status`, must not be `None`")  # noqa: E501
+        if (
+            self.local_vars_configuration.client_side_validation
+            and transition_status is None
+        ):  # noqa: E501
+            raise ValueError(
+                "Invalid value for `transition_status`, must not be `None`"
+            )  # noqa: E501
 
         self._transition_status = transition_status
 
@@ -175,18 +245,22 @@ class V1beta1ModelStatus(object):
         for attr, _ in six.iteritems(self.openapi_types):
             value = getattr(self, attr)
             if isinstance(value, list):
-                result[attr] = list(map(
-                    lambda x: x.to_dict() if hasattr(x, "to_dict") else x,
-                    value
-                ))
+                result[attr] = list(
+                    map(lambda x: x.to_dict() if hasattr(x, "to_dict") else x, value)
+                )
             elif hasattr(value, "to_dict"):
                 result[attr] = value.to_dict()
             elif isinstance(value, dict):
-                result[attr] = dict(map(
-                    lambda item: (item[0], item[1].to_dict())
-                    if hasattr(item[1], "to_dict") else item,
-                    value.items()
-                ))
+                result[attr] = dict(
+                    map(
+                        lambda item: (
+                            (item[0], item[1].to_dict())
+                            if hasattr(item[1], "to_dict")
+                            else item
+                        ),
+                        value.items(),
+                    )
+                )
             else:
                 result[attr] = value
 

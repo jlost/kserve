@@ -4247,9 +4247,22 @@
           "description": "Details of last failure, when load of target model is failed or blocked.",
           "$ref": "#/definitions/v1beta1.FailureInfo"
         },
+        "modelName": {
+          "description": "The effective model name used in inference endpoint paths. Derived from container args, environment variables, or the InferenceService name.",
+          "type": "string"
+        },
         "states": {
           "description": "State information of the predictor's model.",
           "$ref": "#/definitions/v1beta1.ModelRevisionStates"
+        },
+        "supportedProtocols": {
+          "description": "All inference protocols supported by the serving runtime (e.g. [\"v2\", \"grpc-v2\"]). Consumers select a protocol from this list to construct endpoint paths.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "default": ""
+          },
+          "x-kubernetes-list-type": "atomic"
         },
         "transitionStatus": {
           "description": "Whether the available predictor endpoints reflect the current Spec or is in transition",
