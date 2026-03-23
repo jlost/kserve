@@ -1,0 +1,491 @@
+job_type,build_id,pr_number,result,job_start,job_end,total_s,create_end,olm_end,test_end,destroy_end,pre_test_s,test_s,post_s,test_step_name,failure_category,failure_signals,log_fetched
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2035045027842887680,1256,FAILURE,1774027525,1774034569,7044,1774030305,1774030314,1774031352,1774034553,2780,1038,3217,e2e-predictor,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2035043833934254080,1196,FAILURE,1774027239,1774033369,6130,1774029697,1774029706,1774031198,1774033349,2458,1492,2171,e2e-predictor,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2035043356379189248,1196,ABORTED,1774027127,1774027225,98,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2035034805917192192,1257,FAILURE,1774025087,1774034401,9314,1774026814,,,,1727,,,,platform:provision,timed out.*clusterversions/,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2035031566433914880,1257,ABORTED,1774024317,1774025077,760,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2035028153738465280,1196,ABORTED,1774023501,1774028748,5247,1774025158,1774025169,1774026659,1774028733,1657,1490,2089,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2035026560267849728,1257,ABORTED,1774023123,1774026273,3150,1774024606,,,1774026258,1483,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2035007197879996416,1256,FAILURE,1774018506,1774023890,5384,1774020427,1774020435,1774021445,1774023874,1921,1010,2445,e2e-predictor,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034925381860986880,1249,ABORTED,1773999001,1774002927,3926,1774000116,1774000125,1774000869,1774002911,1115,744,2058,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034923220053790720,1196,FAILURE,1773998483,1774003382,4899,1773999925,1773999934,1774001444,1774003366,1442,1510,1938,e2e-predictor,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034907249561833472,1196,FAILURE,1773994675,1773998183,3508,1773996048,1773996056,1773996298,1773998167,1373,242,1885,e2e-predictor,platform:ci-infra,executable file.*not found,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034907049787133952,1196,ABORTED,1773994628,1773994662,34,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034906128285962240,1253,FAILURE,1773994413,1773998887,4474,1773996045,1773996054,1773997076,1773998871,1632,1022,1811,e2e-predictor,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034887000405839872,1196,FAILURE,1773989847,1773993826,3979,1773991627,1773991635,1773991853,1773993810,1780,218,1973,e2e-predictor,platform:ci-infra,executable file.*not found,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034886084868968448,1196,ABORTED,1773989630,1773989834,204,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034740650498330624,1253,FAILURE,1773954955,1773959824,4869,1773956762,1773956771,1773957781,1773959808,1807,1010,2043,e2e-predictor,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034737687876866048,1253,ABORTED,1773954249,1773954942,693,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034736809811906560,1253,ABORTED,1773954041,1773954236,195,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034701652337889280,1196,FAILURE,1773945657,1773950007,4350,1773947412,1773947423,1773948429,1773949991,1755,1006,1578,e2e-predictor,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034698378759114752,1196,ABORTED,1773944877,1773945644,767,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034678723441070080,1251,SUCCESS,1773940195,1773944890,4695,1773941477,1773941488,1773942532,1773944875,1282,1044,2358,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034672876505796608,1251,ABORTED,1773938796,1773942283,3487,1773940204,,,1773942268,1408,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034661811868930048,1251,ABORTED,1773936157,1773941096,4939,1773938807,,,1773941081,2650,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034656664157687808,1196,FAILURE,1773935483,1773943132,7649,1773937009,,,1773943117,1526,,,,platform:provision,timed out.*clusterversions/,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034654873814831104,1250,ABORTED,1773934505,1773938477,3972,1773936188,,,1773938462,1683,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034653313592463360,1249,SUCCESS,1773934133,1773940597,6464,1773935477,1773935489,1773936497,,1344,1008,4100,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034646828955209728,1196,ABORTED,1773932586,1773936471,3885,1773934133,1773934141,1773934157,1773936456,1547,16,2314,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034645269265518592,1196,ABORTED,1773932217,1773932567,350,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034599708202110976,1196,FAILURE,1773921351,1773922122,771,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034588012532207616,1246,SUCCESS,1773918564,1773923645,5081,1773920317,1773920327,1773921393,1773923630,1753,1066,2252,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034581542226890752,1196,ABORTED,1773917020,1773922301,5281,1773918587,1773918635,1773919774,1773922285,1567,1139,2527,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034551544484990976,1196,FAILURE,1773909869,1773916062,6193,1773911591,1773911600,1773912634,1773916046,1722,1034,3428,e2e-predictor,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034410147706572800,1220,FAILURE,1773876157,1773881325,5168,1773879104,1773879115,1773879325,1773881309,2947,210,2000,e2e-predictor,setup:install,Timed out.*waiting for CRD,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034407582218588160,1220,ABORTED,1773875547,1773876146,599,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034406683412795392,1243,SUCCESS,1773875332,1773880347,5015,1773877026,1773877039,1773878055,1773880332,1694,1016,2292,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034397161415774208,1196,FAILURE,1773873061,1773878329,5268,1773874989,1773874996,1773875974,1773878314,1928,978,2355,e2e-predictor,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034395813249028096,1196,ABORTED,1773872740,1773873042,302,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034386067599134720,1196,ABORTED,1773870417,1773875141,4724,1773872285,1773872293,1773872746,1773875126,1868,453,2395,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034380864401444864,1196,ABORTED,1773869174,1773872520,3346,1773870428,,,1773872504,1254,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034379964798734336,1196,ABORTED,1773868961,1773869166,205,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034357763177451520,1196,ABORTED,1773863667,1773869205,5538,1773865922,1773865939,1773867010,1773869188,2255,1071,2195,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034302368794808320,1220,FAILURE,1773850461,1773854995,4534,1773852667,1773852675,1773852870,1773854980,2206,195,2125,e2e-predictor,setup:install,Timed out.*waiting for CRD,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034255774955343872,1196,FAILURE,1773839352,1773852658,13306,1773841469,1773841477,1773848707,,2117,7230,3951,e2e-predictor,test:other,,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034202310648795136,1196,FAILURE,1773826605,1773827419,814,1773827341,,,1773827403,736,,,,platform:ci-infra,jq: error,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034200033804423168,1196,ABORTED,1773826063,1773826599,536,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2034028559395196928,1196,FAILURE,1773785179,1773786679,1500,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033998995788926976,1149,FAILURE,1773778131,1773782551,4420,1773781014,,,1773782535,2883,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033997947170983936,1149,ABORTED,1773777881,1773778114,233,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033988864699273216,1196,FAILURE,1773775716,1773779533,3817,1773778691,,,1773779517,2975,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033979723595386880,1221,FAILURE,1773773536,1773778162,4626,1773776585,,,1773778146,3049,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033960114628595712,1149,FAILURE,1773768861,1773773017,4156,1773772020,,,1773773001,3159,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033932240890630144,1220,FAILURE,1773762216,1773767280,5064,1773765790,,,1773767264,3574,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033923481023811584,1223,ABORTED,1773760128,1773760133,5,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033918043494551552,1196,FAILURE,1773758830,1773764579,5749,1773763703,,,1773764564,4873,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033917888414355456,1196,ABORTED,1773758796,1773758819,23,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033911766215299072,1196,ABORTED,1773757333,1773758783,1450,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033902587266207744,1196,ABORTED,1773755144,1773757313,2169,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033900577112461312,1140,FAILURE,1773754667,1773767322,12655,,,,,,,,,platform:provision,,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033876883128455168,1196,ABORTED,1773749019,1773758735,9716,1773751959,,,,2940,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033852487940706304,1221,FAILURE,1773743202,1773753181,9979,1773745762,1773745774,1773750545,1773753166,2560,4771,2636,e2e-predictor,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033845336413310976,1217,ABORTED,1773741498,1773749140,7642,1773744847,1773744861,1773747056,1773749125,3349,2195,2084,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033843315274682368,1196,ABORTED,1773741013,1773752609,11596,1773742653,1773742660,1773749024,,1640,6364,3585,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033835152500592640,1196,ABORTED,1773739068,1773743215,4147,1773740389,1773740421,1773741016,1773743200,1321,595,2199,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033832187219939328,1196,ABORTED,1773738359,1773739057,698,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033831611438469120,1196,ABORTED,1773738222,1773738348,126,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033830959870119936,1196,ABORTED,1773738068,1773738211,143,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033830573381783552,1196,ABORTED,1773737975,1773737994,19,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033830495984291840,1196,ABORTED,1773737960,1773737965,5,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033740714810019840,1195,FAILURE,1773716552,1773725657,9105,1773718199,1773718211,1773721656,,1647,3445,4001,e2e-predictor,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033692445576794112,1217,SUCCESS,1773705044,1773712898,7854,1773706673,1773706684,1773710432,1773712883,1629,3748,2466,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033677824178524160,1195,SUCCESS,1773701558,1773709081,7523,1773703379,1773703386,1773707166,1773709066,1821,3780,1915,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033666130182148096,1195,ABORTED,1773698771,1773703495,4724,1773700237,1773700254,1773701564,1773703479,1466,1310,1931,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033661586769448960,1195,ABORTED,1773697685,1773700772,3087,1773698785,,,1773700757,1100,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033660792619929600,1195,ABORTED,1773697497,1773697673,176,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033637612194893824,1196,SUCCESS,1773691970,1773698886,6916,1773693306,1773693315,1773696976,1773698871,1336,3661,1910,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033637370556846080,1196,ABORTED,1773691912,1773691957,45,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033635779602812928,1195,ABORTED,1773691534,1773700692,9158,1773692702,1773692711,1773696583,,1168,3872,4109,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033632516358803456,1195,ABORTED,1773690755,1773691520,765,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033630641639133184,1195,ABORTED,1773690309,1773690745,436,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033630036191350784,1195,ABORTED,1773690165,1773690298,133,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033612825229791232,1149,SUCCESS,1773686058,1773692982,6924,1773687483,1773687491,1773691116,1773692966,1425,3625,1866,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033600285942747136,1149,ABORTED,1773683072,1773688013,4941,1773684310,1773684334,1773686063,1773687998,1238,1729,1950,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033599128704913408,1149,FAILURE,1773682795,1773682986,191,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033581616541995008,1195,SUCCESS,1773678619,1773685828,7209,1773680192,1773680201,1773684010,1773685812,1573,3809,1818,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2033579081324302336,1196,FAILURE,1773678016,1773685032,7016,1773679506,1773679522,1773683284,1773685017,1490,3762,1748,e2e-predictor,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032661353331691520,1195,SUCCESS,1773459212,1773465978,6766,1773460362,1773460389,1773464137,1773465963,1150,3748,1841,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032595906016055296,1195,SUCCESS,1773443608,1773452887,9279,1773445195,1773445218,1773448881,,1587,3663,4006,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032561829250600960,1175,SUCCESS,1773435483,1773442404,6921,1773436794,1773436819,1773440582,1773442389,1311,3763,1822,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032547739325173760,1195,SUCCESS,1773432124,1773440835,8711,1773435213,1773435236,1773438931,1773440819,3089,3695,1904,e2e-predictor,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032526757747232768,1195,ABORTED,1773427121,1773435715,8594,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032517810554408960,1160,ABORTED,1773424988,1773430982,5994,1773429341,,,1773430967,4353,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032514267311247360,1175,FAILURE,1773424144,1773433857,9713,1773427738,1773427781,1773431359,1773433842,3594,3578,2498,e2e-predictor,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032510929031139328,1200,ABORTED,1773423348,1773424810,1462,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032498676080840704,1196,FAILURE,1773420427,1773428628,8201,1773423205,,,1773428612,2778,,,,platform:provision,timed out.*clusterversions/,True
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032491497911226369,1194,ABORTED,1773418716,1773420634,1918,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032490204018774016,1195,ABORTED,1773418407,1773430518,12111,1773422949,,,,4542,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032482414894256128,1195,ABORTED,1773416549,1773418398,1849,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032480643195080704,1195,ABORTED,1773416127,1773416538,411,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-predictor,2032478851262582784,1170,FAILURE,1773415699,1773425424,9725,,,,,,,,,platform:provision,,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2035067800728375296,1196,FAILURE,1774032953,1774039322,6369,1774033765,1774033808,1774034673,1774039307,812,865,4649,e2e-graph,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2035045027754807296,1256,SUCCESS,1774027525,1774034554,7029,1774030635,1774030650,1774032523,1774034539,3110,1873,2031,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2035043827219173376,1196,FAILURE,1774027237,1774032419,5182,1774029420,1774029441,1774030281,1774032403,2183,840,2138,e2e-graph,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2035043355716489216,1196,ABORTED,1774027126,1774027226,100,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2035034803396415488,1257,FAILURE,1774025086,1774033120,8034,,,,,,,,,platform:provision,,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2035031566345834496,1257,ABORTED,1774024316,1774025077,761,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2035028149523189760,1196,ABORTED,1774023499,1774028159,4660,1774025140,1774025152,1774025986,1774028143,1641,834,2173,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2035026559911333888,1257,ABORTED,1774023123,1774025986,2863,1774024606,,,1774025970,1483,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2035007197804498944,1256,FAILURE,1774018506,1774025493,6987,1774020218,1774020262,1774020746,,1712,484,4747,e2e-graph,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034925375535976448,1249,ABORTED,1773998999,1774002990,3991,1774000163,1774000170,1774000869,1774002975,1164,699,2121,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034923219986681856,1196,FAILURE,1773998484,1774003315,4831,1773999889,1773999896,1774001356,1774003300,1405,1460,1959,e2e-graph,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034907245371723776,1196,FAILURE,1773994673,1773998234,3561,1773996128,1773996137,1773996358,1773998219,1455,221,1876,e2e-graph,platform:ci-infra,executable file.*not found,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034907049329954816,1196,ABORTED,1773994629,1773994662,33,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034906128181104640,1253,SUCCESS,1773994412,1774000062,5650,1773996202,1773996211,1773998092,1774000046,1790,1881,1970,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034886995603361792,1196,FAILURE,1773989846,1773993830,3984,1773991702,1773991710,1773991915,1773993815,1856,205,1915,e2e-graph,platform:ci-infra,executable file.*not found,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034886084776693760,1196,ABORTED,1773989630,1773989834,204,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034740644567584768,1253,SUCCESS,1773954954,1773960587,5633,1773956813,1773956821,1773958682,1773960571,1859,1861,1905,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034737683649007616,1253,ABORTED,1773954248,1773954942,694,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034736809597997056,1253,ABORTED,1773954041,1773954235,194,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034701647313113088,1196,SUCCESS,1773945656,1773951452,5796,1773947419,1773947435,1773949319,1773951436,1763,1884,2133,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034698378666840064,1196,ABORTED,1773944879,1773945644,765,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034678723344601088,1251,SUCCESS,1773940194,1773946289,6095,1773942281,1773942293,1773944154,1773946273,2087,1861,2135,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034672870642159616,1251,ABORTED,1773938794,1773942208,3414,1773940197,,,1773942192,1403,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034661807670431744,1251,ABORTED,1773936156,1773941275,5119,1773938465,1773938479,1773938797,1773941260,2309,318,2478,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034656664061218816,1196,FAILURE,1773935462,1773942842,7380,1773937436,,,1773942827,1974,,,,platform:provision,timed out.*clusterversions/,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034654873751916544,1250,ABORTED,1773934507,1773938601,4094,1773936181,,,1773938586,1674,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034653313495994368,1249,SUCCESS,1773934133,1773939553,5420,1773935407,1773935419,1773937272,1773939538,1274,1853,2281,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034646825121615872,1196,ABORTED,1773932585,1773936491,3906,1773934084,1773934129,1773934151,1773936477,1499,22,2340,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034645269152272384,1196,ABORTED,1773932216,1773932571,355,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034599708084670464,1196,FAILURE,1773921352,1773922122,770,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034588012121165824,1246,SUCCESS,1773918563,1773924378,5815,1773920258,1773920279,1773922131,1773924364,1695,1852,2247,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034551544392716288,1196,SUCCESS,1773909876,1773917541,7665,1773911596,1773911604,1773913504,,1720,1900,4037,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034410145223544832,1220,FAILURE,1773876157,1773881249,5092,1773879023,1773879035,1773879238,1773881233,2866,203,2011,e2e-graph,setup:install,Timed out.*waiting for CRD,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034407582117924864,1220,ABORTED,1773875547,1773876146,599,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034406682884313088,1243,SUCCESS,1773875332,1773881064,5732,1773877115,1773877123,1773878987,1773881049,1783,1864,2077,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034397158081302528,1196,FAILURE,1773873060,1773879133,6073,1773874980,1773874988,1773876891,1773879118,1920,1903,2242,e2e-graph,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034395813173530624,1196,ABORTED,1773872740,1773873041,301,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034386067339087872,1196,ABORTED,1773870416,1773874956,4540,1773871519,1773871528,1773872746,1773874941,1103,1218,2210,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034380861071167488,1196,ABORTED,1773869174,1773872448,3274,1773870428,,,1773872433,1254,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034379959828484096,1196,ABORTED,1773868959,1773869163,204,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034357756466565120,1196,ABORTED,1773863664,1773870318,6654,1773866036,1773866063,1773867989,1773870302,2372,1926,2329,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034302368694145024,1220,FAILURE,1773850460,1773855070,4610,1773852740,1773852763,1773852978,1773855054,2280,215,2092,e2e-graph,setup:install,Timed out.*waiting for CRD,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034255774854680576,1196,FAILURE,1773839352,1773852759,13407,1773841562,1773841574,1773848798,,2210,7224,3961,e2e-graph,test:other,,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034202308132212736,1196,FAILURE,1773826604,1773827401,797,1773827341,,,1773827385,737,,,,platform:ci-infra,jq: error,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034200033707954176,1196,ABORTED,1773826062,1773826594,532,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2034028559307116544,1196,FAILURE,1773785179,1773786679,1500,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033998982723670016,1149,FAILURE,1773778126,1773782556,4430,1773781069,,,1773782540,2943,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033997947082903552,1149,ABORTED,1773777881,1773778114,233,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033993119157981184,1149,ABORTED,1773776730,1773777872,1142,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033988864602804224,1196,FAILURE,1773775716,1773779637,3921,1773778805,,,1773779622,3089,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033979723498917888,1221,FAILURE,1773773536,1773777404,3868,1773776588,,,1773777388,3052,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033960114586652672,1149,FAILURE,1773768861,1773774012,5151,1773772024,,,1773773763,3163,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033932239233880064,1220,FAILURE,1773762216,1773766132,3916,1773765276,,,1773766117,3060,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033923480981868544,1223,ABORTED,1773760128,1773760134,6,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033918041816829952,1196,FAILURE,1773758830,1773764721,5891,1773763152,,,1773764706,4322,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033917885058912256,1196,ABORTED,1773758796,1773758819,23,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033911761177939968,1196,ABORTED,1773757333,1773758783,1450,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033902582237237248,1196,ABORTED,1773755142,1773757313,2171,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033900577053741056,1140,FAILURE,1773754668,1773766828,12160,,,,,,,,,platform:provision,,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033876883069734912,1196,ABORTED,1773749018,1773758735,9717,1773750523,1773750532,1773755150,,1505,4618,3585,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033852487894568960,1221,FAILURE,1773743202,1773751088,7886,1773745827,1773745840,1773748974,1773751073,2625,3134,2114,e2e-graph,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033845336367173632,1217,ABORTED,1773741498,1773748856,7358,1773744113,1773744122,1773746776,1773748840,2615,2654,2080,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033843313794093056,1196,ABORTED,1773741013,1773752609,11596,1773742679,1773742689,1773749024,,1666,6335,3585,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033835150818676736,1196,ABORTED,1773739068,1773743238,4170,1773740352,1773740361,1773741016,1773743223,1284,655,2222,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033832181356302336,1196,ABORTED,1773738358,1773739057,699,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033831607244165120,1196,ABORTED,1773738220,1773738348,128,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033830959031259136,1196,ABORTED,1773738069,1773738210,141,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033830571150413824,1196,ABORTED,1773737975,1773737995,20,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033830495942348800,1196,ABORTED,1773737958,1773737963,5,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033740714734522368,1195,FAILURE,1773716553,1773725002,8449,1773718291,1773718305,1773720969,,1738,2664,4033,e2e-graph,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033692445539045376,1217,SUCCESS,1773705044,1773711816,6772,1773706641,1773706648,1773709323,1773711800,1597,2675,2493,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033677824119803904,1195,SUCCESS,1773701558,1773707930,6372,1773703385,1773703394,1773706055,1773707914,1827,2661,1875,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033666129884352512,1195,ABORTED,1773698770,1773703539,4769,1773700270,1773700290,1773701564,1773703524,1500,1274,1975,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033661581740478464,1195,ABORTED,1773697683,1773700794,3111,1773698783,,,1773700778,1100,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033660792565403648,1195,ABORTED,1773697497,1773697673,176,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033637608906559488,1196,SUCCESS,1773691969,1773697874,5905,1773693297,1773693305,1773695951,1773697858,1328,2646,1923,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033637367205597184,1196,ABORTED,1773691911,1773691957,46,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033635776327061504,1195,SUCCESS,1773691533,1773697379,5846,1773692853,1773692860,1773695508,1773697363,1320,2648,1871,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033632515566080000,1195,ABORTED,1773690754,1773691520,766,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033630641580412928,1195,ABORTED,1773690309,1773690745,436,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033630035507679232,1195,ABORTED,1773690165,1773690298,133,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033612817562603520,1149,SUCCESS,1773686056,1773691794,5738,1773687438,1773687446,1773690113,1773691779,1382,2667,1681,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033600285900804096,1149,ABORTED,1773683072,1773687968,4896,1773684308,1773684327,1773686063,1773687953,1236,1736,1905,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033599128654581760,1149,FAILURE,1773682795,1773682987,192,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033581614029606912,1195,SUCCESS,1773678618,1773687324,8706,1773680578,1773680594,1773683250,,1960,2656,4074,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2033579081278164992,1196,SUCCESS,1773678052,1773684025,5973,1773679532,1773679546,1773682279,1773684004,1480,2733,1746,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032661353289748480,1195,SUCCESS,1773459212,1773465042,5830,1773460484,1773460497,1773463127,1773465026,1272,2630,1915,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032595905969917952,1195,SUCCESS,1773443606,1773451918,8312,1773445211,1773445223,1773447862,,1605,2639,4056,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032592239099645952,1175,SUCCESS,1773442732,1773449109,6377,1773444611,1773444620,1773447248,1773449093,1879,2628,1861,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032547739262259200,1195,SUCCESS,1773432125,1773439923,7798,1773435253,1773435264,1773437929,1773439907,3128,2665,1994,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032526757705289728,1195,ABORTED,1773427121,1773435715,8594,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032517810449551360,1160,ABORTED,1773424988,1773429325,4337,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032514267248332800,1175,SUCCESS,1773424145,1773435751,11606,1773429094,1773429109,1773431743,,4949,2634,4008,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032510929001779200,1200,ABORTED,1773423348,1773424810,1462,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032498676026314752,1196,FAILURE,1773420427,1773430072,9645,,,,,,,,,platform:provision,,True
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032491497814757376,1194,ABORTED,1773418716,1773420634,1918,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032490203972636672,1195,ABORTED,1773418405,1773428756,10351,1773422076,1773422099,1773424757,,3671,2658,3999,e2e-graph,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032482414537740288,1195,ABORTED,1773416548,1773418398,1850,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-graph,2032480643153137664,1195,ABORTED,1773416127,1773416538,411,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2035045027876442112,1256,SUCCESS,1774027525,1774033727,6202,1774030913,1774030921,1774031577,1774033711,3388,656,2150,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2035043836538916864,1196,FAILURE,1774027240,1774033066,5826,1774030111,1774030120,1774030947,1774033050,2871,827,2119,e2e-raw,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2035043356416937984,1196,ABORTED,1774027127,1774027226,99,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2035034808433774592,1257,FAILURE,1774025088,1774032473,7385,1774026814,,,1774032458,1726,,,,platform:provision,timed out.*clusterversions/,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2035031566450692096,1257,ABORTED,1774024317,1774025077,760,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2035028157077131264,1196,ABORTED,1774023502,1774029884,6382,1774024978,1774024987,1774025829,,1476,842,4055,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2035026560313987072,1257,ABORTED,1774023123,1774026277,3154,1774024606,,,1774026262,1483,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2035007197917745152,1256,SUCCESS,1774018506,1774023102,4596,1774020430,1774020438,1774021099,1774023086,1924,661,2003,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034925389410734080,1249,ABORTED,1773999001,1774002621,3620,1774000019,1774000027,1774000667,1774002604,1018,640,1954,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034923220108316672,1196,FAILURE,1773998482,1774003330,4848,1773999904,1773999912,1774001353,1774003314,1422,1441,1977,e2e-raw,test:assertion,"FAILED .*::test_, AssertionError",True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034907252921470976,1196,FAILURE,1773994676,1773998228,3552,1773996127,1773996137,1773996353,1773998212,1451,216,1875,e2e-raw,platform:ci-infra,executable file.*not found,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034907049829076992,1196,ABORTED,1773994628,1773994662,34,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034906128323710976,1253,SUCCESS,1773994412,1773998692,4280,1773996112,1773996122,1773996777,1773998676,1700,655,1915,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034887002234556416,1196,FAILURE,1773989848,1773993879,4031,1773991779,1773991792,1773992006,1773993864,1931,214,1873,e2e-raw,platform:ci-infra,executable file.*not found,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034886084902522880,1196,ABORTED,1773989630,1773989834,204,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034740652960387072,1253,SUCCESS,1773954956,1773959663,4707,1773956964,1773956973,1773957609,1773959647,2008,636,2054,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034737690372476928,1253,ABORTED,1773954249,1773954942,693,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034736809853849600,1253,ABORTED,1773954041,1773954235,194,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034701654862860288,1196,SUCCESS,1773945658,1773950090,4432,1773947317,1773947354,1773948058,1773950075,1659,704,2032,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034698378805252096,1196,ABORTED,1773944877,1773945644,767,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034678723483013120,1251,SUCCESS,1773940193,1773944580,4387,1773941491,1773941502,1773942207,1773944565,1298,705,2373,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034672879022379008,1251,ABORTED,1773938797,1773942422,3625,1773940200,,,1773942406,1403,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034661814385512448,1251,ABORTED,1773936161,1773938854,2693,,,,1773938838,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034656664216408064,1196,FAILURE,1773935463,1773944798,9335,1773937190,,,,1727,,,,platform:provision,timed out.*clusterversions/,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034654873852579840,1250,ABORTED,1773934505,1773938223,3718,1773936163,,,1773938209,1658,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034653313646989312,1249,SUCCESS,1773934135,1773938452,4317,1773935382,1773935394,1773936072,1773938437,1247,678,2380,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034646830985252864,1196,ABORTED,1773932588,1773936550,3962,1773934166,1773934175,1773934185,1773936535,1578,10,2365,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034645269311655936,1196,ABORTED,1773932215,1773932568,353,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034599708227276800,1196,FAILURE,1773921353,1773922122,769,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034588012578344960,1246,SUCCESS,1773918563,1773923209,4646,1773920335,1773920343,1773920990,1773923193,1772,647,2219,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034551544531128320,1196,SUCCESS,1773909869,1773914335,4466,1773911652,1773911668,1773912377,1773914319,1783,709,1958,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034410150235738112,1220,FAILURE,1773876157,1773881293,5136,1773879003,1773879015,1773879230,1773881278,2846,215,2063,e2e-raw,setup:install,Timed out.*waiting for CRD,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034407582247948288,1220,ABORTED,1773875549,1773876146,597,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034406683458932736,1243,SUCCESS,1773875332,1773880071,4739,1773877120,1773877128,1773877769,1773880056,1788,641,2302,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034397163936550912,1196,SUCCESS,1773873061,1773878026,4965,1773874917,1773874925,1773875617,1773878011,1856,692,2409,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034395813286776832,1196,ABORTED,1773872740,1773873041,301,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034386067649466368,1196,ABORTED,1773870418,1773874468,4050,1773871546,1773871555,1773872242,1773874453,1128,687,2226,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034380866918027264,1196,ABORTED,1773869175,1773872455,3280,1773870410,,,1773872440,1235,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034379967319511040,1196,ABORTED,1773868961,1773869164,203,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034357765694033920,1196,FAILURE,1773863667,1773868327,4660,1773867464,,,1773868311,3797,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034302368937414656,1220,FAILURE,1773850460,1773854963,4503,1773852648,1773852655,1773852854,1773854947,2188,199,2109,e2e-raw,setup:install,Timed out.*waiting for CRD,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034255775001481216,1196,FAILURE,1773839352,1773852630,13278,1773841402,1773841414,1773848643,,2050,7229,3987,e2e-raw,test:other,,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034202313169571840,1196,FAILURE,1773826605,1773827387,782,1773827320,,,1773827372,715,,,,platform:ci-infra,jq: error,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034200033837977600,1196,ABORTED,1773826063,1773826594,531,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2034028559432945664,1196,FAILURE,1773785179,1773786679,1500,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033998999144370176,1149,FAILURE,1773778132,1773781904,3772,1773781065,,,1773781888,2933,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033997947800129536,1149,ABORTED,1773777881,1773778114,233,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033993119288004608,1149,ABORTED,1773776730,1773777872,1142,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033988864728633344,1196,FAILURE,1773775716,1773779937,4221,1773778414,,,1773779921,2698,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033979723645718528,1221,FAILURE,1773773536,1773778179,4643,1773776578,,,1773778164,3042,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033960114674733056,1149,FAILURE,1773768861,1773773017,4156,1773772022,,,1773773001,3161,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033932242580934656,1220,FAILURE,1773762216,1773767188,4972,1773765681,,,1773767173,3465,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033918046011133952,1196,FAILURE,1773758831,1773771655,12824,1773762416,1773762431,1773769661,1773771638,3585,7230,1994,e2e-raw,test:other,,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033917890096271360,1196,ABORTED,1773758796,1773758819,23,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033911771261046784,1196,ABORTED,1773757334,1773758783,1449,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033902589795373056,1196,ABORTED,1773755146,1773757313,2167,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033900577154404352,1140,FAILURE,1773754667,1773767332,12665,,,,,,,,,platform:provision,,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033876883178786816,1196,ABORTED,1773749022,1773758735,9713,1773750394,1773750405,1773755150,,1372,4745,3585,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033852487974260736,1221,FAILURE,1773743201,1773750070,6869,1773745747,1773745761,1773748002,1773750054,2546,2241,2068,e2e-raw,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033845336451059712,1217,SUCCESS,1773741499,1773746528,5029,1773742886,1773742905,1773744412,1773746513,1387,1507,2116,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033843316935626752,1196,ABORTED,1773741013,1773752609,11596,1773742671,1773742678,1773749024,,1658,6346,3585,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033835155021369344,1196,ABORTED,1773739068,1773743228,4160,1773740245,1773740255,1773741016,1773743212,1177,761,2212,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033832193104547840,1196,ABORTED,1773738362,1773739057,695,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033831613963440128,1196,ABORTED,1773738224,1773738348,124,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033830962386702336,1196,ABORTED,1773738069,1773738211,142,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033830574484885504,1196,ABORTED,1773737977,1773737994,17,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033830496030429184,1196,ABORTED,1773737958,1773737964,6,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033740715015540736,1195,SUCCESS,1773716554,1773721447,4893,1773718153,1773718165,1773719494,1773721431,1599,1329,1953,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033692445618737152,1217,SUCCESS,1773705044,1773710370,5326,1773706571,1773706579,1773707899,1773710355,1527,1320,2471,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033677824216272896,1195,SUCCESS,1773701558,1773706665,5107,1773703375,1773703383,1773704642,1773706649,1817,1259,2023,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033666130224091136,1195,ABORTED,1773698771,1773703496,4725,1773700274,1773700282,1773701564,1773703480,1503,1282,1932,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033661589294419968,1195,ABORTED,1773697686,1773700588,2902,1773698770,,,1773700572,1084,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033660792670261248,1195,ABORTED,1773697498,1773697673,175,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033637614736642048,1196,SUCCESS,1773691971,1773696620,4649,1773693301,1773693351,1773694714,1773696605,1330,1363,1906,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033637373924872192,1196,ABORTED,1773691913,1773691957,44,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033635781272145920,1195,SUCCESS,1773691534,1773696432,4898,1773692916,1773692923,1773694512,1773696416,1382,1589,1920,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033632518040719360,1195,ABORTED,1773690755,1773691520,765,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033630641681076224,1195,ABORTED,1773690309,1773690745,436,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033630036233293824,1195,ABORTED,1773690165,1773690298,133,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033612829860302848,1149,SUCCESS,1773686061,1773690634,4573,1773687453,1773687462,1773688732,1773690619,1392,1270,1902,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033600286005661696,1149,ABORTED,1773683072,1773687718,4646,1773684415,1773684423,1773685768,1773687702,1343,1345,1950,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033599128738467840,1149,FAILURE,1773682796,1773682986,190,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033581619058577408,1195,SUCCESS,1773678620,1773683723,5103,1773680563,1773680577,1773681826,1773683707,1943,1249,1897,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2033579081387216896,1196,SUCCESS,1773678015,1773682708,4693,1773679569,1773679589,1773680949,1773682692,1554,1360,1759,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032661353377828864,1195,SUCCESS,1773459211,1773463687,4476,1773460424,1773460446,1773461775,1773463671,1213,1329,1912,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032595906070581248,1195,SUCCESS,1773443607,1773448462,4855,1773445187,1773445198,1773446541,1773448446,1580,1343,1921,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032592239149977600,1175,SUCCESS,1773442733,1773447797,5064,1773444634,1773444647,1773445947,1773447781,1901,1300,1850,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032547739362922496,1195,SUCCESS,1773432125,1773437725,5600,1773434513,1773434533,1773435868,1773437709,2388,1335,1857,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032526757793370112,1195,ABORTED,1773427121,1773435715,8594,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032517810537631744,1160,ABORTED,1773424990,1773429325,4335,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032514267361579008,1175,SUCCESS,1773424145,1773433445,9300,1773427977,1773428009,1773429353,,3832,1344,4092,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032510929073082368,1200,ABORTED,1773423348,1773424810,1462,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032498676110200832,1196,FAILURE,1773420427,1773430954,10527,1773423397,,,,2970,,,,platform:provision,timed out.*clusterversions/,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032491497911226368,1194,ABORTED,1773418714,1773420633,1919,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032490204060717056,1195,SUCCESS,1773418407,1773425592,7185,1773422449,1773422461,1773423760,1773425577,4042,1299,1832,e2e-raw,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032482416706195456,1195,ABORTED,1773416549,1773418398,1849,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032480643350269952,1195,ABORTED,1773416127,1773416538,411,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032478852936110080,1170,FAILURE,1773415699,1773425215,9516,,,,,,,,,platform:provision,,True
+pull-ci-opendatahub-io-kserve-master-e2e-raw,2032477759384588288,1195,ABORTED,1773415439,1773416118,679,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2035059496664961024,1196,FAILURE,1774030972,1774036546,5574,1774032842,1774032885,1774034390,1774036531,1870,1505,2156,e2e-llm-inference-service,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2035045027796750336,1256,FAILURE,1774027525,1774033966,6441,1774031450,1774031458,1774031830,1774033950,3925,372,2136,e2e-llm-inference-service,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2035043831421865984,1196,ABORTED,1774027238,1774031819,4581,1774028911,1774028926,1774029738,1774031803,1673,812,2081,e2e-llm-inference-service,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2035043356333051904,1196,ABORTED,1774027124,1774027225,101,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2035034804239470592,1257,FAILURE,1774025085,1774028934,3849,1774026077,1774026090,1774026907,1774028919,992,817,2027,e2e-llm-inference-service,setup:install,timed out.*waiting.*(kuadrant|authorino),True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2035032024317693952,1246,FAILURE,1774024422,1774028123,3701,1774025593,1774025601,1774025956,1774028108,1171,355,2167,e2e-llm-inference-service,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2035031566366806016,1257,ABORTED,1774024316,1774027157,2841,1774025079,,,1774027142,763,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2035028151200911360,1196,ABORTED,1774023499,1774030716,7217,1774025086,1774025099,1774026573,,1587,1474,4143,e2e-llm-inference-service,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2035026559949082624,1257,ABORTED,1774023120,1774024306,1186,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2035011683474214912,1256,FAILURE,1774019573,1774020221,648,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2035007197838053376,1256,FAILURE,1774018503,1774019256,753,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034923220016041984,1196,FAILURE,1773998481,1774010768,12287,1774001687,1774001694,1774008476,1774010753,3206,6782,2292,e2e-llm-inference-service,test:collection,ImportError,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034907247934443520,1196,ABORTED,1773994673,1773999046,4373,1773996198,1773996206,1773996609,1773999031,1525,403,2437,e2e-llm-inference-service,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034907049745190912,1196,ABORTED,1773994626,1773994662,36,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034906128239824896,1253,FAILURE,1773994407,1774000423,6016,1773995794,1773995803,1773996232,1774000408,1387,429,4191,e2e-llm-inference-service,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034886997054590976,1196,FAILURE,1773989844,1773993765,3921,1773991444,1773991451,1773991844,1773993749,1600,393,1921,e2e-llm-inference-service,platform:ci-infra,executable file.*not found,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034886084827025408,1196,ABORTED,1773989627,1773989834,207,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034843510678491136,1246,FAILURE,1773979477,1773983451,3974,1773981001,1773981056,1773981470,1773983436,1524,414,1981,e2e-llm-inference-service,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034759702201503744,1246,FAILURE,1773959496,1773960089,593,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034750106007244800,1246,FAILURE,1773957208,1773958065,857,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034740647981748224,1253,FAILURE,1773954953,1773958690,3737,1773956023,1773956030,1773956420,1773958675,1070,390,2270,e2e-llm-inference-service,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034737686173978624,1253,ABORTED,1773954247,1773954941,694,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034736809627357184,1253,ABORTED,1773954037,1773954235,198,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034701650681139200,1196,FAILURE,1773945656,1773956788,11132,1773947604,1773947612,1773954348,1773956773,1948,6736,2440,e2e-llm-inference-service,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034698378712977408,1196,ABORTED,1773944874,1773945644,770,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034692293092446208,1249,FAILURE,1773943424,1773947699,4275,1773944644,1773944651,1773945469,1773947684,1220,818,2230,e2e-llm-inference-service,setup:install,timed out.*waiting.*(kuadrant|authorino),True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034678723390738432,1251,FAILURE,1773940189,1773946052,5863,1773943445,1773943463,1773943836,1773946037,3256,373,2216,e2e-llm-inference-service,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034676428779294720,1246,FAILURE,1773939642,1773947193,7551,,,,,,,,,platform:provision,,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034672873989214208,1251,ABORTED,1773938794,1773941228,2434,1773940481,,,1773941212,1687,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034661809343959040,1251,ABORTED,1773936155,1773942055,5900,1773937588,1773937600,1773937980,,1433,380,4075,e2e-llm-inference-service,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034656664107356160,1196,ABORTED,1773934930,1773947198,12268,1773936159,1773936169,1773942919,,1229,6750,4279,e2e-llm-inference-service,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034655208436404224,1246,FAILURE,1773934584,1773939104,4520,1773936318,1773936326,1773936708,1773939088,1734,382,2396,e2e-llm-inference-service,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034654873793859584,1250,ABORTED,1773934503,1773938451,3948,1773936057,1773936065,1773936173,1773938436,1554,108,2278,e2e-llm-inference-service,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034653313537937408,1249,FAILURE,1773934131,1773938809,4678,1773935940,1773935968,1773936372,1773938794,1809,404,2437,e2e-llm-inference-service,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034646826803531776,1196,ABORTED,1773932586,1773936466,3880,1773933949,1773934012,1773934066,1773936452,1363,54,2400,e2e-llm-inference-service,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034645269215186944,1196,ABORTED,1773932214,1773932568,354,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034599708139196416,1196,FAILURE,1773921351,1773926732,5381,1773923587,1773923594,1773924544,1773926716,2236,950,2188,e2e-llm-inference-service,platform:timeout,"timed out.*waiting, did not become ready in time",True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034588012167303168,1246,FAILURE,1773918562,1773923425,4863,1773920688,1773920697,1773921089,1773923410,2126,392,2336,e2e-llm-inference-service,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034557179389808640,1243,FAILURE,1773911211,1773917122,5911,1773912690,1773912699,1773913083,,1479,384,4039,e2e-llm-inference-service,test:assertion,FAILED .*::test_,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034551544443047936,1196,ABORTED,1773910384,1773922861,12477,1773911808,1773911816,1773918569,,1424,6753,4292,e2e-llm-inference-service,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034449331934728192,1196,SUCCESS,1773885498,1773889992,4494,1773886516,1773886531,1773888012,1773889977,1018,1481,1980,e2e-llm-inference-service,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034410146062405632,1220,FAILURE,1773876155,1773880588,4433,1773878829,,,1773880564,2674,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034407582147284992,1220,ABORTED,1773875544,1773876146,602,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034406683370852352,1243,FAILURE,1773875329,1773880562,5233,1773878832,,,1773880547,3503,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034397159742246912,1196,FAILURE,1773873059,1773878212,5153,1773876411,,,1773878197,3352,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034395813215473664,1196,ABORTED,1773872738,1773873041,303,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034395634588454912,1196,ABORTED,1773872695,1773876298,3603,1773876414,,,,3719,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034380862723723264,1196,ABORTED,1773869175,1773870407,1232,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034379962298929152,1196,ABORTED,1773868958,1773869171,213,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034357761516507136,1196,FAILURE,1773863665,1773868842,5177,1773866162,1773866169,1773866604,1773868827,2497,435,2238,e2e-llm-inference-service,test:assertion,"FAILED .*::test_, AssertionError",True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034302368752865280,1220,FAILURE,1773850462,1773854385,3923,1773851869,1773851914,1773852284,1773854370,1407,370,2101,e2e-llm-inference-service,setup:install,Timed out.*waiting for CRD,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034255774909206528,1196,FAILURE,1773839350,1773850161,10811,1773841279,1773841336,1773848030,1773850146,1929,6694,2131,e2e-llm-inference-service,test:other,,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034202309050765312,1196,FAILURE,1773826602,1773827901,1299,1773827837,,,1773827885,1235,,,,platform:ci-infra,jq: error,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034200033762480128,1196,ABORTED,1773826061,1773826593,532,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2034028559353253888,1196,FAILURE,1773785178,1773788762,3584,1773787950,,,1773788746,2772,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033998989900124160,1149,FAILURE,1773778128,1773783293,5165,1773781790,,,1773783278,3662,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033997947129040896,1149,ABORTED,1773777880,1773778114,234,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033993119212507136,1149,ABORTED,1773776727,1773779474,2747,1773778172,,,1773779458,1445,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033988864653135872,1196,FAILURE,1773775714,1773781054,5340,1773779555,,,1773781039,3841,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033985244985561088,1020,FAILURE,1773774851,1773776978,2127,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033984791900065792,1060,FAILURE,1773774744,1773775303,559,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033984470817705984,1100,FAILURE,1773774680,1773778110,3430,1773777215,,,1773778095,2535,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033984460805902336,1140,FAILURE,1773774664,1773779815,5151,1773778150,,,1773779712,3486,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033984416547606528,1163,FAILURE,1773774657,1773775776,1119,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033984420951625728,1149,ABORTED,1773774654,1773777682,3028,1773777022,,,1773777666,2368,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033984409710891008,1170,FAILURE,1773774652,1773774850,198,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033984333374558208,1192,FAILURE,1773774634,1773779498,4864,1773777936,,,1773779483,3302,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033984289414057984,1196,ABORTED,1773774623,1773775707,1084,,,,,,,,,,,False
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033983898135826432,1221,FAILURE,1773774531,1773778823,4292,1773777951,,,1773778807,3420,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-kserve-master-e2e-llm-inference-service,2033983902661480448,1220,FAILURE,1773774531,1773779566,5035,1773777987,,,1773779550,3456,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2034220458240380928,750,ABORTED,1773830931,1773836760,5829,1773832028,1773832041,1773832710,,1097,669,4050,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2034220402867179520,750,ABORTED,1773830916,1773830922,6,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2034220347313623040,750,ABORTED,1773830904,1773830910,6,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2034113324060250112,750,FAILURE,1773805387,1773808471,3084,1773806102,1773806136,1773806648,1773808456,715,512,1823,raw,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2034065519371358208,750,FAILURE,1773793990,1773798311,4321,1773795041,1773795051,1773795917,1773798296,1051,866,2394,raw,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2034003959168897024,750,FAILURE,1773779313,1773783169,3856,1773781530,,,1773783154,2217,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2033977365062750208,748,FAILURE,1773772973,1773776395,3422,1773775297,,,1773776380,2324,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2033976536230531072,746,ABORTED,1773772776,1773773164,388,,,,1773773147,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2033974130109321216,748,ABORTED,1773772203,1773774529,2326,1773773139,,,1773774513,936,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2033970791955042304,746,ABORTED,1773771405,1773773136,1731,1773772923,,,1773773121,1518,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2033969694515400704,746,ABORTED,1773771150,1773771183,33,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2033877481081016320,739,FAILURE,1773749159,1773758588,9429,,,,,,,,,platform:provision,,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2033708376503881728,739,FAILURE,1773708841,1773713016,4175,1773710480,1773710536,1773711096,1773713001,1639,560,1920,raw,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2032488048184266752,737,ABORTED,1773417892,1773423658,5766,1773421622,1773421632,1773421811,1773423642,3730,179,1847,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2032487681702760448,736,FAILURE,1773417804,1773418268,464,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2032487221314981888,737,ABORTED,1773417695,1773417884,189,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2032486858306359296,736,ABORTED,1773417610,1773417740,130,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2032076234325757952,729,ABORTED,1773319709,1773322554,2845,1773321373,,,1773322539,1664,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2031969871180337152,726,FAILURE,1773294349,1773297616,3267,1773295275,1773295288,1773295489,1773297600,926,201,2127,raw,setup:config,"no objects passed to apply, lstat.*no such file or directory, accumulating resources.*evalsymlink failure",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2031756572551548928,726,FAILURE,1773243494,1773249171,5677,1773246938,1773246973,1773247139,1773249156,3444,166,2032,raw,setup:config,"no objects passed to apply, lstat.*no such file or directory, accumulating resources.*evalsymlink failure",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2031060964400435200,722,SUCCESS,1773077651,1773082222,4571,1773079215,1773079286,1773080164,1773082203,1564,878,2058,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2030973579754999808,722,FAILURE,1773056814,1773057425,611,1773057344,,,1773057410,530,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2030615163194839040,722,FAILURE,1772971362,1772971885,523,1772971798,,,1772971869,436,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2030327558528045056,722,FAILURE,1772902791,1772903437,646,1772903371,,,1772903420,580,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2030037317292396544,722,FAILURE,1772833592,1772834373,781,1772834339,,,1772834358,747,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2030027660679188480,722,FAILURE,1772831289,1772831392,103,1772831355,,,1772831376,66,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2030020070461149184,722,FAILURE,1772829480,1772829603,123,1772829567,,,1772829586,87,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2030007370582593536,722,FAILURE,1772826452,1772826552,100,1772826515,,,1772826535,63,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2030000252810956800,722,FAILURE,1772824755,1772824844,89,1772824808,,,1772824828,53,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2029995720643186688,722,FAILURE,1772823675,1772823772,97,1772823729,,,1772823756,54,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2029992505906302976,722,FAILURE,1772822908,1772823317,409,1772823280,,,1772823300,372,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2029990791937527808,721,FAILURE,1772822501,1772822906,405,1772822856,,,1772822890,355,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2029990117728325632,720,ABORTED,1772822339,1772822411,72,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2029987243254353920,719,ABORTED,1772821655,1772822364,709,1772822292,,,1772822347,637,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2029681120768954368,717,ABORTED,1772748668,1772755167,6499,1772752251,1772752261,1772753176,1772755152,3583,915,1991,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2028867610325553152,698,SUCCESS,1772554712,1772564388,9676,1772561198,1772561274,1772562262,1772564373,6486,988,2126,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2028865694380068864,698,ABORTED,1772554255,1772554702,447,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2027036536825974784,698,SUCCESS,1772118149,1772127848,9699,1772124978,1772125023,1772125964,1772127833,6829,941,1884,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2026741373155151872,698,FAILURE,1772047778,1772055200,7422,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2026734991634862080,698,ABORTED,1772046256,1772047770,1514,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2022350040957194240,690,SUCCESS,1771000803,1771004997,4194,1771001969,1771001983,1771003239,1771004982,1166,1256,1758,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2022349589855604736,690,ABORTED,1771000695,1771000791,96,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2021739736606969856,689,SUCCESS,1770855295,1770859062,3767,1770856424,1770856478,1770857368,1770859048,1129,890,1694,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2019796069902192640,684,ABORTED,1770391888,1770391949,61,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2019785071124287488,682,SUCCESS,1770389555,1770393412,3857,1770390531,1770390543,1770391561,1770393396,976,1018,1851,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2017220628263735296,675,FAILURE,1769777854,1769783334,5480,1769780338,1769780348,1769781264,1769783319,2484,916,2070,raw,test:other,,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2016578342857216000,670,SUCCESS,1769624738,1769628649,3911,1769625956,1769626014,1769626881,1769628633,1218,867,1768,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2013850189005066240,665,ABORTED,1768974287,1768975366,1079,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2013658613674938368,664,ABORTED,1768928606,1768931653,3047,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2013124473334534144,644,SUCCESS,1768801256,1768807717,6461,1768805044,1768805077,1768806055,1768807702,3788,978,1662,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2013124214554365952,644,ABORTED,1768801194,1768801247,53,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2011122549118734336,653,ABORTED,1768323961,1768326567,2606,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2010322207363829760,644,SUCCESS,1768133144,1768136885,3741,1768134309,1768134317,1768135284,1768136869,1165,967,1601,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2008642594170474496,639,SUCCESS,1767732692,1767740032,7340,1767737247,1767737257,1767738227,1767740018,4555,970,1805,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,2000593625272029184,628,ABORTED,1765813669,1765818213,4544,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-kserve,1993770765740150784,614,SUCCESS,1764186972,1764193507,6535,1764191023,1764191075,1764192055,1764193492,4051,980,1452,raw,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2034220459918102528,750,ABORTED,1773830931,1773838267,7336,1773832014,,,,1083,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2034220407065677824,750,ABORTED,1773830917,1773830921,4,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2034220347359760384,750,ABORTED,1773830904,1773830910,6,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2034113324097998848,750,FAILURE,1773805387,1773808806,3419,1773806075,1773806107,1773806982,1773808791,688,875,1824,llmisvc,setup:install,timed out.*waiting.*(kuadrant|authorino),True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2034065519413301248,750,FAILURE,1773793990,1773802917,8927,1773795077,1773795118,1773799434,1773802902,1087,4316,3483,llmisvc,platform:cluster-health,node.*NotReady,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2034003959206645760,750,FAILURE,1773779314,1773783198,3884,1773781524,,,1773783184,2210,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2033977365121470464,748,FAILURE,1773772973,1773776316,3343,1773775326,,,1773776300,2353,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2033976536264085504,746,ABORTED,1773772776,1773773397,621,,,,1773773381,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2033974130151264256,748,ABORTED,1773772201,1773773747,1546,1773773139,,,1773773733,938,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2033970794475819008,746,ABORTED,1773771406,1773773136,1730,1773772923,,,1773773121,1517,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2033969694540566528,746,ABORTED,1773771144,1773771182,38,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2033708376545824768,739,SUCCESS,1773708841,1773714171,5330,1773710405,1773710452,1773712157,1773714156,1564,1705,2014,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2032500185581490176,736,FAILURE,1773420785,1773421000,215,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2032488049031516160,737,ABORTED,1773417892,1773423756,5864,1773420832,1773420841,1773421811,1773423741,2940,970,1945,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2032487681748897792,736,FAILURE,1773417805,1773418268,463,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2032487222992703488,737,ABORTED,1773417695,1773417884,189,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2032486858352496640,736,ABORTED,1773417610,1773417740,130,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2032076234489335808,729,ABORTED,1773319709,1773322807,3098,1773321373,,,1773322767,1664,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2031969871230668800,726,SUCCESS,1773294349,1773299582,5233,1773295424,1773295468,1773297601,1773299567,1075,2133,1981,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2031756574665478144,726,FAILURE,1773243496,1773249210,5714,1773246528,1773246535,1773246859,1773249195,3032,324,2351,llmisvc,platform:timeout,did not become ready in time,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2031426883005976576,722,SUCCESS,1773164890,1773170245,5355,1773166094,1773166108,1773168166,1773170230,1204,2058,2079,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2031374171069485056,722,FAILURE,1773152322,1773158936,6614,1773154536,1773154579,1773156597,1773158921,2214,2018,2339,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2031327927244689408,722,FAILURE,1773141298,1773146710,5412,1773142581,1773142594,1773144400,1773146694,1283,1806,2310,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2031090958296158208,722,FAILURE,1773084800,1773087249,2449,1773086672,,,1773087233,1872,,,,platform:provision,timed out.*hostedclusters/,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2031062119029411840,722,FAILURE,1773077924,1773083222,5298,1773079225,1773079238,1773081396,1773083205,1301,2158,1826,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2030973579801137152,722,FAILURE,1773056815,1773057369,554,1773057298,,,1773057354,483,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2030615163232587776,722,FAILURE,1772971362,1772971885,523,1772971798,,,1772971869,436,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2030327558712594432,722,FAILURE,1772902791,1772903441,650,1772903370,,,1772903424,579,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2030037317330145280,722,FAILURE,1772833592,1772834374,782,1772834338,,,1772834358,746,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2030027660716937216,722,FAILURE,1772831290,1772831390,100,1772831353,,,1772831374,63,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2030020070498897920,722,FAILURE,1772829480,1772829602,122,1772829531,,,1772829585,51,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2030007370616147968,722,FAILURE,1772826452,1772826590,138,1772826508,,,1772826573,56,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2030000253205221376,722,FAILURE,1772824755,1772824852,97,1772824816,,,1772824836,61,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2029995723096854528,722,FAILURE,1772823676,1772823794,118,1772823757,,,1772823778,81,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2029992505960828928,722,FAILURE,1772822909,1772823344,435,1772823309,,,1772823327,400,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2029990793627832320,721,FAILURE,1772822501,1772822958,457,1772822889,,,1772822943,388,,,,platform:provision,status code: 400,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2029990117799628800,720,ABORTED,1772822341,1772822411,70,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2029987246613991424,719,ABORTED,1772821655,1772822389,734,1772822292,,,1772822372,637,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2029681121117081600,717,ABORTED,1772748668,1772755417,6749,1772752257,1772752268,1772753252,1772755402,3589,984,2165,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2029230489973297152,698,FAILURE,1772641228,1772646515,5287,1772642886,1772642997,1772644818,1772646500,1658,1821,1697,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2028867612837941248,698,FAILURE,1772554712,1772564803,10091,1772561361,1772561376,1772563189,1772564788,6649,1813,1614,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2028865694434594816,698,ABORTED,1772554256,1772554702,446,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2028466535797886976,698,FAILURE,1772459088,1772467298,8210,1772463627,1772463720,1772465688,1772467283,4539,1968,1610,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2028320036128559104,698,FAILURE,1772424159,1772434164,10005,1772430641,1772430687,1772432671,1772434148,6482,1984,1493,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2027816188964245504,698,FAILURE,1772304037,1772308890,4853,1772305462,1772305511,1772307497,1772308875,1425,1986,1393,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2027444502200848384,698,FAILURE,1772215416,1772228373,12957,1772224526,1772224575,1772226754,1772228358,9110,2179,1619,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2027036673711280128,698,FAILURE,1772118183,1772129351,11168,1772125699,1772125794,1772127830,1772129335,7516,2036,1521,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2026741375684317184,698,FAILURE,1772047778,1772055199,7421,,,,,,,,,platform:provision,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2026734991735525376,698,ABORTED,1772046256,1772047770,1514,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2022350043473776640,690,SUCCESS,1771000803,1771006503,5700,1771002146,1771002621,1771004465,1771006488,1343,1844,2038,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2022349590082097152,690,ABORTED,1771000695,1771000791,96,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2021976546826260480,689,ABORTED,1770911754,1770916495,4741,1770914990,1770915063,1770915139,1770916480,3236,76,1356,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2021739736657301504,689,FAILURE,1770855295,1770860862,5567,1770856635,1770856688,1770859410,1770860847,1340,2722,1452,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2020859081853505536,682,SUCCESS,1770645330,1770652316,6986,1770648440,1770648527,1770650401,1770652301,3110,1874,1915,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2019796070057381888,684,ABORTED,1770391889,1770391949,60,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2019785071170424832,682,FAILURE,1770389266,1770394106,4840,1770390531,1770390753,1770392547,1770394090,1265,1794,1559,llmisvc,test:assertion,"FAILED .*::test_, \d+ failed.*\d+ passed, AssertionError",True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2017220628305678336,675,FAILURE,1769777855,1769784406,6551,1769779533,1769779575,1769782783,1769784391,1678,3208,1623,llmisvc,platform:cluster-health,node.*NotReady,True
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2016578342903353344,670,SUCCESS,1769624744,1769630073,5329,1769625948,1769626000,1769627931,1769630058,1204,1931,2142,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2013850191475511296,665,ABORTED,1768974287,1768975366,1079,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2013658613716881408,664,ABORTED,1768928605,1768931653,3048,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2013124474169200640,644,SUCCESS,1768801256,1768808939,7683,1768805029,1768805078,1768807033,1768808924,3773,1955,1906,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2013124214596308992,644,ABORTED,1768801194,1768801247,53,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2011122549164871680,653,ABORTED,1768323960,1768326567,2607,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2010322207409967104,644,SUCCESS,1768133144,1768138053,4909,1768134401,1768134431,1768136348,1768138038,1257,1917,1705,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2008642594212417536,639,SUCCESS,1767732692,1767741010,8318,1767737175,1767737183,1767739060,1767740994,4483,1877,1950,llmisvc,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,2000593625330749440,628,ABORTED,1765813669,1765818213,4544,,,,,,,,,,,False
+pull-ci-opendatahub-io-odh-model-controller-main-e2e-odh-llmisvc,1993770765786288128,614,SUCCESS,1764186974,1764194038,7064,1764190648,1764190700,1764192579,1764194023,3674,1879,1459,llmisvc,,,False
