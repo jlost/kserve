@@ -907,7 +907,7 @@ func (r *RawHTTPRouteReconciler) Reconcile(ctx context.Context, isvc *v1beta1.In
 	if isvc.Status.URL, err = createRawURL(isvc, r.ingressConfig); err != nil {
 		return ctrl.Result{}, err
 	}
-	isvc.Status.Address, err = createAddress(ctx, r.client, isvc, r.ingressConfig)
+	isvc.Status.Address, err = createAddress(ctx, r.client, isvc, false)
 	if err != nil {
 		return ctrl.Result{}, err
 	}

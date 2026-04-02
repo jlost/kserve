@@ -140,17 +140,9 @@ func (r *RawIngressReconciler) Reconcile(ctx context.Context, isvc *v1beta1.Infe
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	isvc.Status.Address, err = createAddress(ctx, r.client, isvc, r.ingressConfig)
+	isvc.Status.Address, err = createAddress(ctx, r.client, isvc, authEnabled)
 	if err != nil {
 		return ctrl.Result{}, err
-	}
-
-	if authEnabled {
-		// When auth is enabled, the OAuth proxy port takes precedence over any
-		// port set by createAddress (e.g. :8080 for headless services).
-		host := getRawServiceHost(isvc)
-		isvc.Status.Address.URL.Host = host + ":" + strconv.Itoa(constants.OauthProxyPort)
-		isvc.Status.Address.URL.Scheme = "https"
 	}
 
 	isvc.Status.SetCondition(v1beta1.IngressReady, &apis.Condition{
@@ -161,65 +153,51 @@ func (r *RawIngressReconciler) Reconcile(ctx context.Context, isvc *v1beta1.Infe
 	return ctrl.Result{}, nil
 }
 
-func createRawURLODH(ctx context.Context, client client.Client, isvc *v1beta1.InferenceService, authEnabled bool) (*knapis.URL, error) {
-	// upstream implementation
-	// var err error
-	// url := &knapis.URL{}
-	// url.Scheme = ingressConfig.UrlScheme
-	// url.Host, err = GenerateDomainName(isvc.Name, isvc.ObjectMeta, ingressConfig)
-	// if err != nil {
-	//	return nil, err
-	// }
-	// if authEnabled {
-	//	url.Host += ":" + strconv.Itoa(constants.OauthProxyPort)
-	// }
-	// return url, nil
-
-	// ODH changes
-	var url *knapis.URL
+func createRawURLODH(ctx context.Context, cl client.Client, isvc *v1beta1.InferenceService, authEnabled bool) (*knapis.URL, error) {
 	if val, ok := isvc.Labels[constants.NetworkVisibility]; ok && val == constants.ODHRouteEnabled {
-		var err error
-		url, err = v1beta1utils.GetRouteURLIfExists(ctx, client, isvc.ObjectMeta, isvc.Name)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		url = &apis.URL{
-			Host:   getRawServiceHost(isvc),
-			Scheme: "http",
-			Path:   "",
-		}
-		if authEnabled {
-			url.Host += ":" + strconv.Itoa(constants.OauthProxyPort)
-			url.Scheme = "https"
-		}
+		return v1beta1utils.GetRouteURLIfExists(ctx, cl, isvc.ObjectMeta, isvc.Name)
+	}
+	// In ODH the URL scheme is determined by the auth annotation, not by
+	// ingressConfig.UrlScheme. Plain HTTP by default; HTTPS when auth adds
+	// the OAuth proxy with TLS termination.
+	url := &apis.URL{
+		Host:   getRawServiceHost(isvc),
+		Scheme: "http",
+		Path:   "",
+	}
+	if authEnabled {
+		url.Host += ":" + strconv.Itoa(constants.OauthProxyPort)
+		url.Scheme = "https"
 	}
 	return url, nil
 }
 
-func createAddress(ctx context.Context, cl client.Client, isvc *v1beta1.InferenceService, ingressConfig *v1beta1.IngressConfig) (*duckv1.Addressable, error) {
+func createAddress(ctx context.Context, cl client.Client, isvc *v1beta1.InferenceService, authEnabled bool) (*duckv1.Addressable, error) {
 	host := getRawServiceHost(isvc)
-	// Determine the entry point service name.
-	// If a transformer exists, it becomes the entry point; otherwise, the predictor is.
-	entryPointSvcName := constants.PredictorServiceName(isvc.Name)
-	if isvc.Spec.Transformer != nil {
-		entryPointSvcName = constants.TransformerServiceName(isvc.Name)
-	}
-	// Check if the entry point service is headless
-	entryPointSvc := &corev1.Service{}
-	if err := cl.Get(ctx, types.NamespacedName{
-		Namespace: isvc.Namespace,
-		Name:      entryPointSvcName,
-	}, entryPointSvc); err != nil {
-		return nil, fmt.Errorf("failed to get entry point service %s: %w", entryPointSvcName, err)
-	}
-	if entryPointSvc.Spec.ClusterIP == corev1.ClusterIPNone {
-		host = host + ":" + constants.InferenceServiceDefaultHttpPort
+	scheme := "http"
+	if authEnabled {
+		host += ":" + strconv.Itoa(constants.OauthProxyPort)
+		scheme = "https"
+	} else {
+		entryPointSvcName := constants.PredictorServiceName(isvc.Name)
+		if isvc.Spec.Transformer != nil {
+			entryPointSvcName = constants.TransformerServiceName(isvc.Name)
+		}
+		entryPointSvc := &corev1.Service{}
+		if err := cl.Get(ctx, types.NamespacedName{
+			Namespace: isvc.Namespace,
+			Name:      entryPointSvcName,
+		}, entryPointSvc); err != nil {
+			return nil, fmt.Errorf("failed to get entry point service %s: %w", entryPointSvcName, err)
+		}
+		if entryPointSvc.Spec.ClusterIP == corev1.ClusterIPNone {
+			host += ":" + constants.InferenceServiceDefaultHttpPort
+		}
 	}
 	return &duckv1.Addressable{
 		URL: &apis.URL{
 			Host:   host,
-			Scheme: ingressConfig.UrlScheme,
+			Scheme: scheme,
 			Path:   "",
 		},
 	}, nil
