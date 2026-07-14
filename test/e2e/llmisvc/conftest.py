@@ -17,6 +17,14 @@ from pathlib import Path
 
 # Fixture factory - not called explicitly, but must be imported for pytest to discover it.
 from .fixtures import test_case  # noqa: F401
+from .test_namespace import (
+    create_test_namespace,
+    delete_test_namespace,
+    generate_namespace_name,
+    provision_namespace_secrets,
+    skip_deletion,
+)
+from .fixtures import inject_k8s_proxy
 
 _HARDCODED_TLS_WORKLOADS = (
     "workload-llmd-simulator",
@@ -114,6 +122,18 @@ def pytest_configure(config):
         "markers", "tracing: mark test as a distributed tracing test"
     )
     config.addinivalue_line("markers", "flow_control: mark test as a flow control test")
+
+
+@pytest.fixture(scope="function")
+def test_namespace(request):
+    """Create a per-test namespace with secrets, clean up after the test."""
+    inject_k8s_proxy()
+    ns = generate_namespace_name(request.node.name)
+    create_test_namespace(ns)
+    provision_namespace_secrets(ns)
+    yield ns
+    if not skip_deletion():
+        delete_test_namespace(ns)
 
 
 @pytest.fixture
