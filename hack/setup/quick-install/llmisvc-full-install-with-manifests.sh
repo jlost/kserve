@@ -645,8 +645,8 @@ RUFF_VERSION=0.14.13
 PINACT_VERSION=v3.9.0
 KIND_VERSION=v0.30.0
 CERT_MANAGER_VERSION=v1.17.0
-ENVOY_GATEWAY_VERSION=v1.7.0
-ENVOY_AI_GATEWAY_VERSION=v0.6.0
+ENVOY_GATEWAY_VERSION=v1.8.1
+ENVOY_AI_GATEWAY_VERSION=v1.0.0
 KNATIVE_OPERATOR_VERSION=v1.21.1
 KNATIVE_SERVING_VERSION=1.21.1
 KEDA_OTEL_ADDON_VERSION=v0.0.6
@@ -658,8 +658,9 @@ ISTIO_VERSION=1.27.1
 KEDA_VERSION=2.18.0
 OPENTELEMETRY_OPERATOR_VERSION=0.74.3
 LWS_VERSION=v0.8.0
-GATEWAY_API_VERSION=v1.4.1
+GATEWAY_API_VERSION=v1.5.1
 GIE_VERSION=v1.5.0
+LLMD_ROUTER_VERSION=v0.9.0
 WVA_VERSION=v0.7.0
 
 #================================================
@@ -1017,12 +1018,47 @@ install_cert_manager() {
 }
 
 # ----------------------------------------
+# CLI/Component: gateway-api-crd
+# ----------------------------------------
+
+uninstall_gateway_api_crd() {
+    log_info "Uninstalling Gateway API CRDs..."
+    kubectl delete -f "https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml" --ignore-not-found=true 2>/dev/null || true
+    log_success "Gateway API CRDs uninstalled"
+}
+
+install_gateway_api_crd() {
+    if kubectl get crd gateways.gateway.networking.k8s.io &>/dev/null; then
+        if [ "$REINSTALL" = false ]; then
+            log_info "Gateway API CRDs are already installed. Use --reinstall to reinstall."
+            return 0
+        else
+            log_info "Reinstalling Gateway API CRDs..."
+            uninstall_gateway_api_crd
+        fi
+    fi
+
+    log_info "Installing Gateway API CRDs ${GATEWAY_API_VERSION}..."
+    kubectl apply -f "https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml"
+
+    log_success "Successfully installed Gateway API CRDs ${GATEWAY_API_VERSION}"
+
+    wait_for_crds "60s" \
+        "gateways.gateway.networking.k8s.io" \
+        "gatewayclasses.gateway.networking.k8s.io"
+
+    log_success "Gateway API CRDs are ready!"
+}
+
+# ----------------------------------------
 # CLI/Component: gateway-api-extension-crd
 # ----------------------------------------
 
 uninstall_gateway_api_extension_crd() {
-    log_info "Uninstalling Gateway Inference Extension CRDs..."
-    kubectl delete -f "https://github.com/kubernetes-sigs/gateway-api-inference-extension/releases/download/${GIE_VERSION}/manifests.yaml" --ignore-not-found=true 2>/dev/null || true
+    log_info "Uninstalling Gateway Inference Extension CRD..."
+    kubectl delete -f "https://github.com/kubernetes-sigs/gateway-api-inference-extension/releases/download/${GIE_VERSION}/v1-manifests.yaml" --ignore-not-found=true 2>/dev/null || true
+    log_info "Uninstalling llm-d CRDs from llm-d-router ${LLMD_ROUTER_VERSION}..."
+    kubectl delete -f "https://github.com/llm-d/llm-d-router/releases/download/${LLMD_ROUTER_VERSION}/manifests.yaml" --ignore-not-found=true 2>/dev/null || true
     log_success "Gateway Inference Extension CRDs uninstalled"
 }
 
@@ -1037,14 +1073,18 @@ install_gateway_api_extension_crd() {
         fi
     fi
 
-    log_info "Installing Gateway Inference Extension CRDs ${GIE_VERSION}..."
-    kubectl apply -f "https://github.com/kubernetes-sigs/gateway-api-inference-extension/releases/download/${GIE_VERSION}/manifests.yaml"
+    log_info "Installing Gateway Inference Extension CRD ${GIE_VERSION}..."
+    kubectl apply -f "https://github.com/kubernetes-sigs/gateway-api-inference-extension/releases/download/${GIE_VERSION}/v1-manifests.yaml"
 
     log_success "Successfully installed Gateway Inference Extension CRDs ${GIE_VERSION}"
 
+    log_info "Installing llm-d.ai CRDs from llm-d-router ${LLMD_ROUTER_VERSION}..."
+    kubectl apply -f "https://github.com/llm-d/llm-d-router/releases/download/${LLMD_ROUTER_VERSION}/manifests.yaml"
+
     wait_for_crds "60s" \
         "inferencepools.inference.networking.k8s.io" \
-        "inferenceobjectives.inference.networking.x-k8s.io"
+        "inferenceobjectives.llm-d.ai" \
+        "inferencemodelrewrites.llm-d.ai"
 
     log_success "Gateway Inference Extension CRDs are ready!"
 }
@@ -1073,11 +1113,28 @@ install_envoy_gateway() {
         fi
     fi
 
+    log_info "Installing Envoy Gateway CRDs ${ENVOY_GATEWAY_VERSION}..."
+    helm show crds oci://docker.io/envoyproxy/gateway-helm \
+        --version "${ENVOY_GATEWAY_VERSION}" \
+        | yq 'select(.spec.group == "gateway.envoyproxy.io")' \
+        | kubectl apply --server-side --force-conflicts -f -
+
+    wait_for_crds "60s" \
+        "backends.gateway.envoyproxy.io" \
+        "backendtrafficpolicies.gateway.envoyproxy.io" \
+        "clienttrafficpolicies.gateway.envoyproxy.io" \
+        "envoyextensionpolicies.gateway.envoyproxy.io" \
+        "envoypatchpolicies.gateway.envoyproxy.io" \
+        "envoyproxies.gateway.envoyproxy.io" \
+        "httproutefilters.gateway.envoyproxy.io" \
+        "securitypolicies.gateway.envoyproxy.io"
+
     log_info "Installing Envoy Gateway ${ENVOY_GATEWAY_VERSION}..."
     helm upgrade -i eg oci://docker.io/envoyproxy/gateway-helm \
         --version "${ENVOY_GATEWAY_VERSION}" \
         -n envoy-gateway-system \
         --create-namespace \
+        --skip-crds \
         --wait
 
     log_success "Successfully installed Envoy Gateway ${ENVOY_GATEWAY_VERSION} via Helm"
@@ -1118,6 +1175,7 @@ install_envoy_ai_gateway() {
         --version "${ENVOY_GATEWAY_VERSION}" \
         -n envoy-gateway-system \
         --create-namespace \
+        --skip-crds \
         -f https://raw.githubusercontent.com/envoyproxy/ai-gateway/${ENVOY_AI_GATEWAY_VERSION}/manifests/envoy-gateway-values.yaml \
         -f https://raw.githubusercontent.com/envoyproxy/ai-gateway/${ENVOY_AI_GATEWAY_VERSION}/examples/inference-pool/envoy-gateway-values-addon.yaml \
         --wait
@@ -1476,6 +1534,7 @@ main() {
         uninstall_envoy_ai_gateway
         uninstall_envoy_gateway
         uninstall_gateway_api_extension_crd
+        uninstall_gateway_api_crd
         uninstall_cert_manager
         uninstall_external_lb
         
@@ -1498,6 +1557,7 @@ main() {
     install_yq
     install_external_lb
     install_cert_manager
+    install_gateway_api_crd
     install_gateway_api_extension_crd
     install_envoy_gateway
     install_envoy_ai_gateway
@@ -2429,6 +2489,8 @@ spec:
       value: /tmp
     - name: VLLM_CONFIG_ROOT
       value: /tmp
+    - name: VLLM_WORKER_MULTIPROC_METHOD
+      value: spawn
     image: vllm/vllm-openai:latest
     name: kserve-container
     readinessProbe:
@@ -2676,11 +2738,21 @@ spec:
           SHUTDOWN_TIMEOUT_ARGS="--shutdown-timeout {{ shutdownTimeout .Spec.Template 15 }}"
         fi
 
+        # --kv-transfer-config with OffloadingConnector requires vLLM 0.22.0+ (vllm-project/vllm#40020).
+        KV_TRANSFER_ARGS=""
+        if [[ "$VLLM_VERSION" =~ ^[0-9]+\.[0-9]+ ]] && [ "$(printf '%s\n%s\n' "0.22.0" "${VLLM_VERSION}" | sort -V | head -1)" = "0.22.0" ]; then
+          if [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv-transfer-config"* ]] && [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv_transfer_config"* ]] && [[ "$*" != *"--kv-transfer-config"* ]] && [[ "$*" != *"--kv_transfer_config"* ]]; then
+            KV_TRANSFER_ARGS="{{ kvTransferConfig .Spec.KVCacheOffloading }}"
+          fi
+        fi
+
         eval "exec vllm serve /mnt/models \
           --served-model-name "{{ .Spec.Model.Name }}" "publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name }}" \
           --port 8001 \
           ${ACCESS_LOG_ARGS} \
           ${SHUTDOWN_TIMEOUT_ARGS} \
+          ${KV_TRANSFER_ARGS} \
+          {{- if and .Spec.Parallelism .Spec.Parallelism.Tensor }} --tensor-parallel-size {{ .Spec.Parallelism.Tensor }}{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--enable-ssl-refresh{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-certfile /var/run/kserve/tls/tls.crt{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-keyfile /var/run/kserve/tls/tls.key{{- end }} \
@@ -2694,7 +2766,7 @@ spec:
         value: INFO
       - name: HF_HUB_CACHE
         value: /models
-      image: ghcr.io/llm-d/llm-d-cuda:v0.7.0
+      image: ghcr.io/llm-d/llm-d-cuda:v0.8.0
       imagePullPolicy: IfNotPresent
       lifecycle:
         preStop:
@@ -2727,7 +2799,7 @@ spec:
         capabilities:
           drop:
           - ALL
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
@@ -2773,7 +2845,7 @@ spec:
             fieldPath: metadata.namespace
       - name: SSL_CERT_DIR
         value: /var/run/kserve/tls:/var/run/secrets/kubernetes.io/serviceaccount:/etc/pki/tls/certs
-      image: ghcr.io/llm-d/llm-d-router-disagg-sidecar:v0.9.0-rc.2
+      image: ghcr.io/llm-d/llm-d-router-disagg-sidecar:v0.9.0
       imagePullPolicy: IfNotPresent
       livenessProbe:
         failureThreshold: 3
@@ -2804,7 +2876,7 @@ spec:
         capabilities:
           drop:
           - ALL
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         runAsNonRoot: true
       terminationMessagePath: /dev/termination-log
       terminationMessagePolicy: FallbackToLogsOnError
@@ -3006,6 +3078,14 @@ spec:
           SHUTDOWN_TIMEOUT_ARGS="--shutdown-timeout {{ shutdownTimeout .Spec.Template 15 }}"
         fi
 
+        # --kv-transfer-config with OffloadingConnector requires vLLM 0.22.0+ (vllm-project/vllm#40020).
+        KV_TRANSFER_ARGS=""
+        if [[ "$VLLM_VERSION" =~ ^[0-9]+\.[0-9]+ ]] && [ "$(printf '%s\n%s\n' "0.22.0" "${VLLM_VERSION}" | sort -V | head -1)" = "0.22.0" ]; then
+          if [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv-transfer-config"* ]] && [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv_transfer_config"* ]] && [[ "$*" != *"--kv-transfer-config"* ]] && [[ "$*" != *"--kv_transfer_config"* ]]; then
+            KV_TRANSFER_ARGS="{{ kvTransferConfig .Spec.KVCacheOffloading }}"
+          fi
+        fi
+
         eval "exec vllm serve \
           /mnt/models \
           --served-model-name "{{ .Spec.Model.Name }}" "publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name }}" \
@@ -3020,6 +3100,7 @@ spec:
           --data-parallel-start-rank $START_RANK \
           ${ACCESS_LOG_ARGS} \
           ${SHUTDOWN_TIMEOUT_ARGS} \
+          ${KV_TRANSFER_ARGS} \
           {{ if .GlobalConfig.EnableTLS }}--enable-ssl-refresh{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-certfile /var/run/kserve/tls/tls.crt{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-keyfile /var/run/kserve/tls/tls.key{{- end }} \
@@ -3033,7 +3114,7 @@ spec:
         value: INFO
       - name: HF_HUB_CACHE
         value: /models
-      image: ghcr.io/llm-d/llm-d-cuda:v0.7.0
+      image: ghcr.io/llm-d/llm-d-cuda:v0.8.0
       imagePullPolicy: IfNotPresent
       lifecycle:
         preStop:
@@ -3070,7 +3151,7 @@ spec:
           - NET_RAW
           drop:
           - ALL
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
@@ -3116,7 +3197,7 @@ spec:
             fieldPath: metadata.namespace
       - name: SSL_CERT_DIR
         value: /var/run/kserve/tls:/var/run/secrets/kubernetes.io/serviceaccount:/etc/pki/tls/certs
-      image: ghcr.io/llm-d/llm-d-router-disagg-sidecar:v0.9.0-rc.2
+      image: ghcr.io/llm-d/llm-d-router-disagg-sidecar:v0.9.0
       imagePullPolicy: IfNotPresent
       livenessProbe:
         failureThreshold: 3
@@ -3146,7 +3227,7 @@ spec:
         capabilities:
           drop:
           - ALL
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
@@ -3341,6 +3422,14 @@ spec:
           SHUTDOWN_TIMEOUT_ARGS="--shutdown-timeout {{ shutdownTimeout .Spec.Worker 15 }}"
         fi
 
+        # --kv-transfer-config with OffloadingConnector requires vLLM 0.22.0+ (vllm-project/vllm#40020).
+        KV_TRANSFER_ARGS=""
+        if [[ "$VLLM_VERSION" =~ ^[0-9]+\.[0-9]+ ]] && [ "$(printf '%s\n%s\n' "0.22.0" "${VLLM_VERSION}" | sort -V | head -1)" = "0.22.0" ]; then
+          if [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv-transfer-config"* ]] && [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv_transfer_config"* ]] && [[ "$*" != *"--kv-transfer-config"* ]] && [[ "$*" != *"--kv_transfer_config"* ]]; then
+            KV_TRANSFER_ARGS="{{ kvTransferConfig .Spec.KVCacheOffloading }}"
+          fi
+        fi
+
         eval "exec vllm serve \
           /mnt/models \
           --served-model-name "{{ .Spec.Model.Name }}" "publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name }}" \
@@ -3355,6 +3444,7 @@ spec:
           --headless \
           ${ACCESS_LOG_ARGS} \
           ${SHUTDOWN_TIMEOUT_ARGS} \
+          ${KV_TRANSFER_ARGS} \
           {{ if .GlobalConfig.EnableTLS }}--enable-ssl-refresh{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-certfile /var/run/kserve/tls/tls.crt{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-keyfile /var/run/kserve/tls/tls.key{{- end }} \
@@ -3370,7 +3460,7 @@ spec:
         value: /models
       - name: VLLM_RANDOMIZE_DP_DUMMY_INPUTS
         value: "1"
-      image: ghcr.io/llm-d/llm-d-cuda:v0.7.0
+      image: ghcr.io/llm-d/llm-d-cuda:v0.8.0
       imagePullPolicy: IfNotPresent
       lifecycle:
         preStop:
@@ -3391,7 +3481,7 @@ spec:
           - NET_RAW
           drop:
           - ALL
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
@@ -3582,11 +3672,21 @@ spec:
             SHUTDOWN_TIMEOUT_ARGS="--shutdown-timeout {{ if .Spec.Prefill }}{{ shutdownTimeout .Spec.Prefill.Template 15 }}{{ else }}{{ shutdownTimeout nil 15 }}{{ end }}"
           fi
 
+          # --kv-transfer-config with OffloadingConnector requires vLLM 0.22.0+ (vllm-project/vllm#40020).
+          KV_TRANSFER_ARGS=""
+          if [[ "$VLLM_VERSION" =~ ^[0-9]+\.[0-9]+ ]] && [ "$(printf '%s\n%s\n' "0.22.0" "${VLLM_VERSION}" | sort -V | head -1)" = "0.22.0" ]; then
+            if [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv-transfer-config"* ]] && [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv_transfer_config"* ]] && [[ "$*" != *"--kv-transfer-config"* ]] && [[ "$*" != *"--kv_transfer_config"* ]]; then
+              KV_TRANSFER_ARGS="{{ if .Spec.Prefill }}{{ kvTransferConfig .Spec.Prefill.KVCacheOffloading }}{{ end }}"
+            fi
+          fi
+
           eval "exec vllm serve /mnt/models \
             --served-model-name "{{ .Spec.Model.Name }}" \
             --port 8000 \
             ${ACCESS_LOG_ARGS} \
             ${SHUTDOWN_TIMEOUT_ARGS} \
+            ${KV_TRANSFER_ARGS} \
+            {{- if and .Spec.Prefill .Spec.Prefill.Parallelism .Spec.Prefill.Parallelism.Tensor }} --tensor-parallel-size {{ .Spec.Prefill.Parallelism.Tensor }}{{- end }} \
             {{ if .GlobalConfig.EnableTLS }}--enable-ssl-refresh{{- end }} \
             {{ if .GlobalConfig.EnableTLS }}--ssl-certfile /var/run/kserve/tls/tls.crt{{- end }} \
             {{ if .GlobalConfig.EnableTLS }}--ssl-keyfile /var/run/kserve/tls/tls.key{{- end }} \
@@ -3600,7 +3700,7 @@ spec:
           value: INFO
         - name: HF_HUB_CACHE
           value: /models
-        image: ghcr.io/llm-d/llm-d-cuda:v0.7.0
+        image: ghcr.io/llm-d/llm-d-cuda:v0.8.0
         imagePullPolicy: IfNotPresent
         lifecycle:
           preStop:
@@ -3633,7 +3733,7 @@ spec:
           capabilities:
             drop:
             - ALL
-          readOnlyRootFilesystem: true
+          readOnlyRootFilesystem: false
           runAsNonRoot: true
           seccompProfile:
             type: RuntimeDefault
@@ -3853,6 +3953,14 @@ spec:
             SHUTDOWN_TIMEOUT_ARGS="--shutdown-timeout {{ if .Spec.Prefill }}{{ shutdownTimeout .Spec.Prefill.Template 15 }}{{ else }}{{ shutdownTimeout nil 15 }}{{ end }}"
           fi
 
+          # --kv-transfer-config with OffloadingConnector requires vLLM 0.22.0+ (vllm-project/vllm#40020).
+          KV_TRANSFER_ARGS=""
+          if [[ "$VLLM_VERSION" =~ ^[0-9]+\.[0-9]+ ]] && [ "$(printf '%s\n%s\n' "0.22.0" "${VLLM_VERSION}" | sort -V | head -1)" = "0.22.0" ]; then
+            if [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv-transfer-config"* ]] && [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv_transfer_config"* ]] && [[ "$*" != *"--kv-transfer-config"* ]] && [[ "$*" != *"--kv_transfer_config"* ]]; then
+              KV_TRANSFER_ARGS="{{ if .Spec.Prefill }}{{ kvTransferConfig .Spec.Prefill.KVCacheOffloading }}{{ end }}"
+            fi
+          fi
+
           eval "exec vllm serve \
             /mnt/models \
             --served-model-name "{{ .Spec.Model.Name }}" "publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name }}" \
@@ -3867,6 +3975,7 @@ spec:
             --data-parallel-start-rank $START_RANK \
             ${ACCESS_LOG_ARGS} \
             ${SHUTDOWN_TIMEOUT_ARGS} \
+            ${KV_TRANSFER_ARGS} \
             {{ if .GlobalConfig.EnableTLS }}--enable-ssl-refresh{{- end }} \
             {{ if .GlobalConfig.EnableTLS }}--ssl-certfile /var/run/kserve/tls/tls.crt{{- end }} \
             {{ if .GlobalConfig.EnableTLS }}--ssl-keyfile /var/run/kserve/tls/tls.key{{- end }} \
@@ -3880,7 +3989,7 @@ spec:
           value: INFO
         - name: HF_HUB_CACHE
           value: /models
-        image: ghcr.io/llm-d/llm-d-cuda:v0.7.0
+        image: ghcr.io/llm-d/llm-d-cuda:v0.8.0
         imagePullPolicy: IfNotPresent
         lifecycle:
           preStop:
@@ -3917,7 +4026,7 @@ spec:
             - NET_RAW
             drop:
             - ALL
-          readOnlyRootFilesystem: true
+          readOnlyRootFilesystem: false
           runAsNonRoot: true
           seccompProfile:
             type: RuntimeDefault
@@ -4127,6 +4236,14 @@ spec:
             SHUTDOWN_TIMEOUT_ARGS="--shutdown-timeout {{ if .Spec.Prefill }}{{ shutdownTimeout .Spec.Prefill.Worker 15 }}{{ else }}{{ shutdownTimeout nil 15 }}{{ end }}"
           fi
 
+          # --kv-transfer-config with OffloadingConnector requires vLLM 0.22.0+ (vllm-project/vllm#40020).
+          KV_TRANSFER_ARGS=""
+          if [[ "$VLLM_VERSION" =~ ^[0-9]+\.[0-9]+ ]] && [ "$(printf '%s\n%s\n' "0.22.0" "${VLLM_VERSION}" | sort -V | head -1)" = "0.22.0" ]; then
+            if [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv-transfer-config"* ]] && [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv_transfer_config"* ]] && [[ "$*" != *"--kv-transfer-config"* ]] && [[ "$*" != *"--kv_transfer_config"* ]]; then
+              KV_TRANSFER_ARGS="{{ if .Spec.Prefill }}{{ kvTransferConfig .Spec.Prefill.KVCacheOffloading }}{{ end }}"
+            fi
+          fi
+
           eval "exec vllm serve \
             /mnt/models \
             --served-model-name "{{ .Spec.Model.Name }}" "publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name }}" \
@@ -4141,6 +4258,7 @@ spec:
             --headless \
             ${ACCESS_LOG_ARGS} \
             ${SHUTDOWN_TIMEOUT_ARGS} \
+            ${KV_TRANSFER_ARGS} \
             {{ if .GlobalConfig.EnableTLS }}--enable-ssl-refresh{{- end }} \
             {{ if .GlobalConfig.EnableTLS }}--ssl-certfile /var/run/kserve/tls/tls.crt{{- end }} \
             {{ if .GlobalConfig.EnableTLS }}--ssl-keyfile /var/run/kserve/tls/tls.key{{- end }} \
@@ -4154,7 +4272,7 @@ spec:
           value: INFO
         - name: HF_HUB_CACHE
           value: /models
-        image: ghcr.io/llm-d/llm-d-cuda:v0.7.0
+        image: ghcr.io/llm-d/llm-d-cuda:v0.8.0
         imagePullPolicy: IfNotPresent
         lifecycle:
           preStop:
@@ -4175,7 +4293,7 @@ spec:
             - NET_RAW
             drop:
             - ALL
-          readOnlyRootFilesystem: true
+          readOnlyRootFilesystem: false
           runAsNonRoot: true
           seccompProfile:
             type: RuntimeDefault
@@ -4251,33 +4369,6 @@ spec:
               name: '{{ ChildName .ObjectMeta.Name `-inference-pool` }}'
               port: 8000
               weight: 1
-            matches:
-            - headers:
-              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
-                type: Exact
-                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
-                  }}
-              path:
-                type: Exact
-                value: /v1/completions
-            - headers:
-              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
-                type: Exact
-                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
-                  }}
-              path:
-                type: Exact
-                value: /v1/completions/
-            name: v1-completions-model-routing
-            timeouts:
-              backendRequest: 0s
-              request: 0s
-          - backendRefs:
-            - group: inference.networking.k8s.io
-              kind: InferencePool
-              name: '{{ ChildName .ObjectMeta.Name `-inference-pool` }}'
-              port: 8000
-              weight: 1
             filters:
             - type: URLRewrite
               urlRewrite:
@@ -4298,33 +4389,6 @@ spec:
               name: '{{ ChildName .ObjectMeta.Name `-inference-pool` }}'
               port: 8000
               weight: 1
-            matches:
-            - headers:
-              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
-                type: Exact
-                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
-                  }}
-              path:
-                type: Exact
-                value: /v1/chat/completions
-            - headers:
-              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
-                type: Exact
-                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
-                  }}
-              path:
-                type: Exact
-                value: /v1/chat/completions/
-            name: v1-chat-completions-model-routing
-            timeouts:
-              backendRequest: 0s
-              request: 0s
-          - backendRefs:
-            - group: inference.networking.k8s.io
-              kind: InferencePool
-              name: '{{ ChildName .ObjectMeta.Name `-inference-pool` }}'
-              port: 8000
-              weight: 1
             filters:
             - type: URLRewrite
               urlRewrite:
@@ -4336,33 +4400,6 @@ spec:
                 type: PathPrefix
                 value: /{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}/v1/responses
             name: v1-responses-path
-            timeouts:
-              backendRequest: 0s
-              request: 0s
-          - backendRefs:
-            - group: inference.networking.k8s.io
-              kind: InferencePool
-              name: '{{ ChildName .ObjectMeta.Name `-inference-pool` }}'
-              port: 8000
-              weight: 1
-            matches:
-            - headers:
-              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
-                type: Exact
-                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
-                  }}
-              path:
-                type: Exact
-                value: /v1/responses
-            - headers:
-              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
-                type: Exact
-                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
-                  }}
-              path:
-                type: Exact
-                value: /v1/responses/
-            name: v1-responses-model-routing
             timeouts:
               backendRequest: 0s
               request: 0s
@@ -4400,6 +4437,54 @@ spec:
                   }}
               path:
                 type: Exact
+                value: /v1/completions
+            - headers:
+              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
+                type: Exact
+                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
+                  }}
+              path:
+                type: Exact
+                value: /v1/completions/
+            - headers:
+              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
+                type: Exact
+                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
+                  }}
+              path:
+                type: Exact
+                value: /v1/chat/completions
+            - headers:
+              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
+                type: Exact
+                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
+                  }}
+              path:
+                type: Exact
+                value: /v1/chat/completions/
+            - headers:
+              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
+                type: Exact
+                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
+                  }}
+              path:
+                type: Exact
+                value: /v1/responses
+            - headers:
+              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
+                type: Exact
+                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
+                  }}
+              path:
+                type: Exact
+                value: /v1/responses/
+            - headers:
+              - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
+                type: Exact
+                value: publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
+                  }}
+              path:
+                type: Exact
                 value: /v1/messages
             - headers:
               - name: '{{ .GlobalConfig.ModelBasedRoutingHeaderName }}'
@@ -4409,7 +4494,111 @@ spec:
               path:
                 type: Exact
                 value: /v1/messages/
-            name: v1-messages-model-routing
+            name: v1-model-routing
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: '{{ ChildName .ObjectMeta.Name `-inference-pool` }}'
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/completions
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
+                  }}/v1/completions
+            name: v1-completions-publisher-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: '{{ ChildName .ObjectMeta.Name `-inference-pool` }}'
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/chat/completions
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
+                  }}/v1/chat/completions
+            name: v1-chat-completions-publisher-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: '{{ ChildName .ObjectMeta.Name `-inference-pool` }}'
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/responses
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
+                  }}/v1/responses
+            name: v1-responses-publisher-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: '{{ ChildName .ObjectMeta.Name `-inference-pool` }}'
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/messages
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
+                  }}/v1/messages
+            name: v1-messages-publisher-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - kind: Service
+              name: '{{ ChildName .ObjectMeta.Name `-kserve-workload-svc` }}'
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name
+                  }}
+            name: v1-publisher-path-catch-all
             timeouts:
               backendRequest: 0s
               request: 0s
@@ -4497,7 +4686,7 @@ spec:
           env:
           - name: SSL_CERT_DIR
             value: /var/run/kserve/tls:/var/run/secrets/kubernetes.io/serviceaccount:/etc/pki/tls/certs
-          image: ghcr.io/llm-d/llm-d-router-endpoint-picker:v0.9.0-rc.2
+          image: ghcr.io/llm-d/llm-d-router-endpoint-picker:v0.9.0
           imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
@@ -4538,9 +4727,12 @@ spec:
             successThreshold: 1
             timeoutSeconds: 1
           resources:
+            limits:
+              cpu: 6
+              memory: 16Gi
             requests:
-              cpu: 256m
-              memory: 500Mi
+              cpu: 1
+              memory: 2Gi
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -4627,6 +4819,192 @@ spec:
           name: tokenizer-tmp
         - emptyDir: {}
           name: tokenizer-cache
+---
+apiVersion: serving.kserve.io/v1alpha2
+kind: LLMInferenceServiceConfig
+metadata:
+  name: kserve-config-llm-scheduler-latency-predictor
+  namespace: kserve
+spec:
+  router:
+    scheduler:
+      template:
+        containers:
+        - env:
+          - name: PREDICTION_SERVER_URL
+            value: http://localhost:8001
+          - name: TRAINING_SERVER_URL
+            value: http://localhost:8000
+          - name: LATENCY_MAX_SAMPLE_SIZE
+            value: "10000"
+          - name: LATENCY_MAX_CONCURRENT_DISPATCHES
+            value: "36"
+          - name: LATENCY_COALESCE_WINDOW_MS
+            value: "1"
+          name: main
+        - env:
+          - name: LATENCY_RETRAINING_INTERVAL_SEC
+            value: "10"
+          - name: LATENCY_MIN_SAMPLES_FOR_RETRAIN
+            value: "100"
+          - name: LATENCY_TTFT_MODEL_PATH
+            value: /models/ttft.joblib
+          - name: LATENCY_TPOT_MODEL_PATH
+            value: /models/tpot.joblib
+          - name: LATENCY_TTFT_SCALER_PATH
+            value: /models/ttft_scaler.joblib
+          - name: LATENCY_TPOT_SCALER_PATH
+            value: /models/tpot_scaler.joblib
+          - name: LATENCY_TTFT_GATED_MODEL_PATH
+            value: /models/ttft_gated.joblib
+          - name: LATENCY_TPOT_GATED_MODEL_PATH
+            value: /models/tpot_gated.joblib
+          - name: LATENCY_MODEL_TYPE
+            value: xgboost
+          - name: LATENCY_MAX_TRAINING_DATA_SIZE_PER_BUCKET
+            value: "500"
+          - name: LATENCY_OBJECTIVE_TYPE
+            value: mean
+          image: ghcr.io/llm-d/llm-d-latency-predictor-training-server:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          name: training-server
+          ports:
+          - containerPort: 8000
+            name: training-port
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8000
+            initialDelaySeconds: 45
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 4000m
+              memory: 8Gi
+            requests:
+              cpu: 2000m
+              memory: 4Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /healthz
+              port: 8000
+            periodSeconds: 10
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+          - mountPath: /models
+            name: training-server-storage
+          - mountPath: /tmp
+            name: training-server-tmp
+        - env:
+          - name: TRAINING_SERVER_URL
+            value: http://localhost:8000
+          - name: LATENCY_MODEL_TYPE
+            value: xgboost
+          - name: PREDICT_HOST
+            value: 0.0.0.0
+          - name: PREDICT_PORT
+            value: "8001"
+          - name: LOCAL_TTFT_MODEL_PATH
+            value: /server_models/ttft.joblib
+          - name: LOCAL_TPOT_MODEL_PATH
+            value: /server_models/tpot.joblib
+          - name: LOCAL_TTFT_SCALER_PATH
+            value: /server_models/ttft_scaler.joblib
+          - name: LOCAL_TPOT_SCALER_PATH
+            value: /server_models/tpot_scaler.joblib
+          - name: LOCAL_TTFT_GATED_MODEL_PATH
+            value: /server_models/ttft_gated.joblib
+          - name: LOCAL_TPOT_GATED_MODEL_PATH
+            value: /server_models/tpot_gated.joblib
+          - name: UVICORN_WORKERS
+            value: "28"
+          - name: OMP_NUM_THREADS
+            value: "1"
+          - name: MODEL_SYNC_INTERVAL_SEC
+            value: "30"
+          - name: LATENCY_OBJECTIVE_TYPE
+            value: mean
+          image: ghcr.io/llm-d/llm-d-latency-predictor-prediction-server:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: 8001
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+          name: prediction-server
+          ports:
+          - containerPort: 8001
+            name: predict-port
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readyz
+              port: 8001
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 28000m
+              memory: 8Gi
+            requests:
+              cpu: 8000m
+              memory: 4Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          startupProbe:
+            failureThreshold: 60
+            httpGet:
+              path: /readyz
+              port: 8001
+            periodSeconds: 10
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+          - mountPath: /server_models
+            name: prediction-server-storage
+          - mountPath: /tmp
+            name: prediction-server-tmp
+        restartPolicy: Always
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - emptyDir:
+            sizeLimit: 20Gi
+          name: training-server-storage
+        - emptyDir:
+            sizeLimit: 10Gi
+          name: prediction-server-storage
+        - emptyDir: {}
+          name: training-server-tmp
+        - emptyDir: {}
+          name: prediction-server-tmp
 ---
 apiVersion: serving.kserve.io/v1alpha2
 kind: LLMInferenceServiceConfig
@@ -4784,11 +5162,21 @@ spec:
           SHUTDOWN_TIMEOUT_ARGS="--shutdown-timeout {{ shutdownTimeout .Spec.Template 15 }}"
         fi
 
+        # --kv-transfer-config with OffloadingConnector requires vLLM 0.22.0+ (vllm-project/vllm#40020).
+        KV_TRANSFER_ARGS=""
+        if [[ "$VLLM_VERSION" =~ ^[0-9]+\.[0-9]+ ]] && [ "$(printf '%s\n%s\n' "0.22.0" "${VLLM_VERSION}" | sort -V | head -1)" = "0.22.0" ]; then
+          if [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv-transfer-config"* ]] && [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv_transfer_config"* ]] && [[ "$*" != *"--kv-transfer-config"* ]] && [[ "$*" != *"--kv_transfer_config"* ]]; then
+            KV_TRANSFER_ARGS="{{ kvTransferConfig .Spec.KVCacheOffloading }}"
+          fi
+        fi
+
         eval "exec vllm serve /mnt/models \
           --served-model-name "{{ .Spec.Model.Name }}" "publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name }}" \
           --port 8000 \
           ${ACCESS_LOG_ARGS} \
           ${SHUTDOWN_TIMEOUT_ARGS} \
+          ${KV_TRANSFER_ARGS} \
+          {{- if and .Spec.Parallelism .Spec.Parallelism.Tensor }} --tensor-parallel-size {{ .Spec.Parallelism.Tensor }}{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--enable-ssl-refresh{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-certfile /var/run/kserve/tls/tls.crt{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-keyfile /var/run/kserve/tls/tls.key{{- end }} \
@@ -4802,7 +5190,7 @@ spec:
         value: INFO
       - name: HF_HUB_CACHE
         value: /models
-      image: ghcr.io/llm-d/llm-d-cuda:v0.7.0
+      image: ghcr.io/llm-d/llm-d-cuda:v0.8.0
       imagePullPolicy: IfNotPresent
       lifecycle:
         preStop:
@@ -4835,7 +5223,7 @@ spec:
         capabilities:
           drop:
           - ALL
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
@@ -5066,6 +5454,14 @@ spec:
           SHUTDOWN_TIMEOUT_ARGS="--shutdown-timeout {{ shutdownTimeout .Spec.Template 15 }}"
         fi
 
+        # --kv-transfer-config with OffloadingConnector requires vLLM 0.22.0+ (vllm-project/vllm#40020).
+        KV_TRANSFER_ARGS=""
+        if [[ "$VLLM_VERSION" =~ ^[0-9]+\.[0-9]+ ]] && [ "$(printf '%s\n%s\n' "0.22.0" "${VLLM_VERSION}" | sort -V | head -1)" = "0.22.0" ]; then
+          if [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv-transfer-config"* ]] && [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv_transfer_config"* ]] && [[ "$*" != *"--kv-transfer-config"* ]] && [[ "$*" != *"--kv_transfer_config"* ]]; then
+            KV_TRANSFER_ARGS="{{ kvTransferConfig .Spec.KVCacheOffloading }}"
+          fi
+        fi
+
         eval "exec vllm serve \
           /mnt/models \
           --served-model-name "{{ .Spec.Model.Name }}" "publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name }}" \
@@ -5080,6 +5476,7 @@ spec:
           --data-parallel-start-rank $START_RANK \
           ${ACCESS_LOG_ARGS} \
           ${SHUTDOWN_TIMEOUT_ARGS} \
+          ${KV_TRANSFER_ARGS} \
           {{ if .GlobalConfig.EnableTLS }}--enable-ssl-refresh{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-certfile /var/run/kserve/tls/tls.crt{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-keyfile /var/run/kserve/tls/tls.key{{- end }} \
@@ -5093,7 +5490,7 @@ spec:
         value: INFO
       - name: HF_HUB_CACHE
         value: /models
-      image: ghcr.io/llm-d/llm-d-cuda:v0.7.0
+      image: ghcr.io/llm-d/llm-d-cuda:v0.8.0
       imagePullPolicy: IfNotPresent
       lifecycle:
         preStop:
@@ -5130,7 +5527,7 @@ spec:
           - NET_RAW
           drop:
           - ALL
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
@@ -5340,6 +5737,14 @@ spec:
           SHUTDOWN_TIMEOUT_ARGS="--shutdown-timeout {{ shutdownTimeout .Spec.Worker 15 }}"
         fi
 
+        # --kv-transfer-config with OffloadingConnector requires vLLM 0.22.0+ (vllm-project/vllm#40020).
+        KV_TRANSFER_ARGS=""
+        if [[ "$VLLM_VERSION" =~ ^[0-9]+\.[0-9]+ ]] && [ "$(printf '%s\n%s\n' "0.22.0" "${VLLM_VERSION}" | sort -V | head -1)" = "0.22.0" ]; then
+          if [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv-transfer-config"* ]] && [[ "${VLLM_ADDITIONAL_ARGS:-}" != *"--kv_transfer_config"* ]] && [[ "$*" != *"--kv-transfer-config"* ]] && [[ "$*" != *"--kv_transfer_config"* ]]; then
+            KV_TRANSFER_ARGS="{{ kvTransferConfig .Spec.KVCacheOffloading }}"
+          fi
+        fi
+
         eval "exec vllm serve \
           /mnt/models \
           --served-model-name "{{ .Spec.Model.Name }}" "publishers/{{ .ObjectMeta.Namespace }}/models/{{ .Spec.Model.Name }}" \
@@ -5354,6 +5759,7 @@ spec:
           --headless \
           ${ACCESS_LOG_ARGS} \
           ${SHUTDOWN_TIMEOUT_ARGS} \
+          ${KV_TRANSFER_ARGS} \
           {{ if .GlobalConfig.EnableTLS }}--enable-ssl-refresh{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-certfile /var/run/kserve/tls/tls.crt{{- end }} \
           {{ if .GlobalConfig.EnableTLS }}--ssl-keyfile /var/run/kserve/tls/tls.key{{- end }} \
@@ -5367,7 +5773,7 @@ spec:
         value: INFO
       - name: HF_HUB_CACHE
         value: /models
-      image: ghcr.io/llm-d/llm-d-cuda:v0.7.0
+      image: ghcr.io/llm-d/llm-d-cuda:v0.8.0
       imagePullPolicy: IfNotPresent
       lifecycle:
         preStop:
@@ -5388,7 +5794,7 @@ spec:
           - NET_RAW
           drop:
           - ALL
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
@@ -6234,7 +6640,17 @@ spec:
     singular: llminferenceserviceconfig
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: Ready
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].reason
+      name: Reason
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         properties:
@@ -14205,6 +14621,11 @@ spec:
                     type: object
                   route:
                     properties:
+                      group:
+                        maxLength: 63
+                        minLength: 1
+                        pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
+                        type: string
                       http:
                         properties:
                           refs:
@@ -14293,6 +14714,12 @@ spec:
                                                       maxItems: 64
                                                       type: array
                                                       x-kubernetes-list-type: set
+                                                      x-kubernetes-validations:
+                                                      - message: AllowHeaders cannot
+                                                          contain '*' alongside other
+                                                          methods
+                                                        rule: '!(''*'' in self &&
+                                                          self.size() > 1)'
                                                     allowMethods:
                                                       items:
                                                         enum:
@@ -14320,7 +14747,7 @@ spec:
                                                       items:
                                                         maxLength: 253
                                                         minLength: 1
-                                                        pattern: (^\*$)|(^([a-zA-Z][a-zA-Z0-9+\-.]+):\/\/([^:/?#]+)(:([0-9]{1,5}))?$)
+                                                        pattern: (^\*$)|(^(http(s)?):\/\/(((\*\.)?([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9-]+|\*)(:([0-9]{1,5}))?)$)
                                                         type: string
                                                       maxItems: 64
                                                       type: array
@@ -14647,6 +15074,9 @@ spec:
                                                       enum:
                                                       - 301
                                                       - 302
+                                                      - 303
+                                                      - 307
+                                                      - 308
                                                       type: integer
                                                   type: object
                                                 responseHeaderModifier:
@@ -14708,6 +15138,7 @@ spec:
                                                   - RequestRedirect
                                                   - URLRewrite
                                                   - ExtensionRef
+                                                  - CORS
                                                   type: string
                                                 urlRewrite:
                                                   properties:
@@ -14762,6 +15193,14 @@ spec:
                                               - type
                                               type: object
                                               x-kubernetes-validations:
+                                              - message: filter.cors must be nil if
+                                                  the filter.type is not CORS
+                                                rule: '!(has(self.cors) && self.type
+                                                  != ''CORS'')'
+                                              - message: filter.cors must be specified
+                                                  for CORS filter.type
+                                                rule: '!(!has(self.cors) && self.type
+                                                  == ''CORS'')'
                                               - message: filter.requestHeaderModifier
                                                   must be nil if the filter.type is
                                                   not RequestHeaderModifier
@@ -14827,6 +15266,9 @@ spec:
                                                 but not both
                                               rule: '!(self.exists(f, f.type == ''RequestRedirect'')
                                                 && self.exists(f, f.type == ''URLRewrite''))'
+                                            - message: CORS filter cannot be repeated
+                                              rule: self.filter(f, f.type == 'CORS').size()
+                                                <= 1
                                             - message: RequestHeaderModifier filter
                                                 cannot be repeated
                                               rule: self.filter(f, f.type == 'RequestHeaderModifier').size()
@@ -14900,6 +15342,11 @@ spec:
                                                 maxItems: 64
                                                 type: array
                                                 x-kubernetes-list-type: set
+                                                x-kubernetes-validations:
+                                                - message: AllowHeaders cannot contain
+                                                    '*' alongside other methods
+                                                  rule: '!(''*'' in self && self.size()
+                                                    > 1)'
                                               allowMethods:
                                                 items:
                                                   enum:
@@ -14926,7 +15373,7 @@ spec:
                                                 items:
                                                   maxLength: 253
                                                   minLength: 1
-                                                  pattern: (^\*$)|(^([a-zA-Z][a-zA-Z0-9+\-.]+):\/\/([^:/?#]+)(:([0-9]{1,5}))?$)
+                                                  pattern: (^\*$)|(^(http(s)?):\/\/(((\*\.)?([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9-]+|\*)(:([0-9]{1,5}))?)$)
                                                   type: string
                                                 maxItems: 64
                                                 type: array
@@ -15248,6 +15695,9 @@ spec:
                                                 enum:
                                                 - 301
                                                 - 302
+                                                - 303
+                                                - 307
+                                                - 308
                                                 type: integer
                                             type: object
                                           responseHeaderModifier:
@@ -15309,6 +15759,7 @@ spec:
                                             - RequestRedirect
                                             - URLRewrite
                                             - ExtensionRef
+                                            - CORS
                                             type: string
                                           urlRewrite:
                                             properties:
@@ -15361,6 +15812,14 @@ spec:
                                         - type
                                         type: object
                                         x-kubernetes-validations:
+                                        - message: filter.cors must be nil if the
+                                            filter.type is not CORS
+                                          rule: '!(has(self.cors) && self.type !=
+                                            ''CORS'')'
+                                        - message: filter.cors must be specified for
+                                            CORS filter.type
+                                          rule: '!(!has(self.cors) && self.type ==
+                                            ''CORS'')'
                                         - message: filter.requestHeaderModifier must
                                             be nil if the filter.type is not RequestHeaderModifier
                                           rule: '!(has(self.requestHeaderModifier)
@@ -15420,6 +15879,9 @@ spec:
                                           both
                                         rule: '!(self.exists(f, f.type == ''RequestRedirect'')
                                           && self.exists(f, f.type == ''URLRewrite''))'
+                                      - message: CORS filter cannot be repeated
+                                        rule: self.filter(f, f.type == 'CORS').size()
+                                          <= 1
                                       - message: RequestHeaderModifier filter cannot
                                           be repeated
                                         rule: self.filter(f, f.type == 'RequestHeaderModifier').size()
@@ -15634,6 +16096,10 @@ spec:
                                         rule: '!has(self.cookieConfig) || !has(self.cookieConfig.lifetimeType)
                                           || self.cookieConfig.lifetimeType != ''Permanent''
                                           || has(self.absoluteTimeout)'
+                                      - message: cookieConfig can only be set with
+                                          type Cookie
+                                        rule: '!has(self.cookieConfig) || self.type
+                                          == ''Cookie'''
                                     timeouts:
                                       properties:
                                         backendRequest:
@@ -15696,6 +16162,7 @@ spec:
                                       || self.matches[0].path.type != ''PathPrefix'')
                                       ? false : true) : true'
                                 maxItems: 16
+                                minItems: 1
                                 type: array
                                 x-kubernetes-list-type: atomic
                                 x-kubernetes-validations:
@@ -15726,6 +16193,11 @@ spec:
                                 type: string
                             type: object
                         type: object
+                      weight:
+                        format: int32
+                        maximum: 1000000
+                        minimum: 0
+                        type: integer
                     type: object
                   scheduler:
                     properties:
@@ -27396,10 +27868,52 @@ spec:
             - message: replicas and scaling are mutually exclusive; use scaling for
                 autoscaled deployments or replicas for static deployments
               rule: '!(has(self.replicas) && has(self.scaling))'
+          status:
+            properties:
+              annotations:
+                additionalProperties:
+                  type: string
+                type: object
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      type: string
+                    message:
+                      type: string
+                    reason:
+                      type: string
+                    severity:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+            type: object
         type: object
     served: true
     storage: false
-  - name: v1alpha2
+    subresources:
+      status: {}
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: Ready
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].reason
+      name: Reason
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha2
     schema:
       openAPIV3Schema:
         properties:
@@ -27424,6 +27938,142 @@ spec:
                   type: object
                   x-kubernetes-map-type: atomic
                 type: array
+              kvCacheOffloading:
+                properties:
+                  cpu:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  evictionPolicy:
+                    default: lru
+                    enum:
+                    - lru
+                    - arc
+                    type: string
+                  secondary:
+                    items:
+                      properties:
+                        fileSystem:
+                          properties:
+                            emptyDir:
+                              properties:
+                                size:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                              required:
+                              - size
+                              type: object
+                            pvc:
+                              properties:
+                                ref:
+                                  properties:
+                                    name:
+                                      type: string
+                                    path:
+                                      type: string
+                                  required:
+                                  - name
+                                  type: object
+                                spec:
+                                  properties:
+                                    accessModes:
+                                      items:
+                                        type: string
+                                      type: array
+                                      x-kubernetes-list-type: atomic
+                                    dataSource:
+                                      properties:
+                                        apiGroup:
+                                          type: string
+                                        kind:
+                                          type: string
+                                        name:
+                                          type: string
+                                      required:
+                                      - kind
+                                      - name
+                                      type: object
+                                      x-kubernetes-map-type: atomic
+                                    dataSourceRef:
+                                      properties:
+                                        apiGroup:
+                                          type: string
+                                        kind:
+                                          type: string
+                                        name:
+                                          type: string
+                                        namespace:
+                                          type: string
+                                      required:
+                                      - kind
+                                      - name
+                                      type: object
+                                    resources:
+                                      properties:
+                                        limits:
+                                          additionalProperties:
+                                            anyOf:
+                                            - type: integer
+                                            - type: string
+                                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                            x-kubernetes-int-or-string: true
+                                          type: object
+                                        requests:
+                                          additionalProperties:
+                                            anyOf:
+                                            - type: integer
+                                            - type: string
+                                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                            x-kubernetes-int-or-string: true
+                                          type: object
+                                      type: object
+                                    selector:
+                                      properties:
+                                        matchExpressions:
+                                          items:
+                                            properties:
+                                              key:
+                                                type: string
+                                              operator:
+                                                type: string
+                                              values:
+                                                items:
+                                                  type: string
+                                                type: array
+                                                x-kubernetes-list-type: atomic
+                                            required:
+                                            - key
+                                            - operator
+                                            type: object
+                                          type: array
+                                          x-kubernetes-list-type: atomic
+                                        matchLabels:
+                                          additionalProperties:
+                                            type: string
+                                          type: object
+                                      type: object
+                                      x-kubernetes-map-type: atomic
+                                    storageClassName:
+                                      type: string
+                                    volumeAttributesClassName:
+                                      type: string
+                                    volumeMode:
+                                      type: string
+                                    volumeName:
+                                      type: string
+                                  type: object
+                              type: object
+                          type: object
+                      type: object
+                    type: array
+                required:
+                - cpu
+                type: object
               labels:
                 additionalProperties:
                   type: string
@@ -27494,6 +28144,142 @@ spec:
                   annotations:
                     additionalProperties:
                       type: string
+                    type: object
+                  kvCacheOffloading:
+                    properties:
+                      cpu:
+                        anyOf:
+                        - type: integer
+                        - type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                      evictionPolicy:
+                        default: lru
+                        enum:
+                        - lru
+                        - arc
+                        type: string
+                      secondary:
+                        items:
+                          properties:
+                            fileSystem:
+                              properties:
+                                emptyDir:
+                                  properties:
+                                    size:
+                                      anyOf:
+                                      - type: integer
+                                      - type: string
+                                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                      x-kubernetes-int-or-string: true
+                                  required:
+                                  - size
+                                  type: object
+                                pvc:
+                                  properties:
+                                    ref:
+                                      properties:
+                                        name:
+                                          type: string
+                                        path:
+                                          type: string
+                                      required:
+                                      - name
+                                      type: object
+                                    spec:
+                                      properties:
+                                        accessModes:
+                                          items:
+                                            type: string
+                                          type: array
+                                          x-kubernetes-list-type: atomic
+                                        dataSource:
+                                          properties:
+                                            apiGroup:
+                                              type: string
+                                            kind:
+                                              type: string
+                                            name:
+                                              type: string
+                                          required:
+                                          - kind
+                                          - name
+                                          type: object
+                                          x-kubernetes-map-type: atomic
+                                        dataSourceRef:
+                                          properties:
+                                            apiGroup:
+                                              type: string
+                                            kind:
+                                              type: string
+                                            name:
+                                              type: string
+                                            namespace:
+                                              type: string
+                                          required:
+                                          - kind
+                                          - name
+                                          type: object
+                                        resources:
+                                          properties:
+                                            limits:
+                                              additionalProperties:
+                                                anyOf:
+                                                - type: integer
+                                                - type: string
+                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                x-kubernetes-int-or-string: true
+                                              type: object
+                                            requests:
+                                              additionalProperties:
+                                                anyOf:
+                                                - type: integer
+                                                - type: string
+                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                x-kubernetes-int-or-string: true
+                                              type: object
+                                          type: object
+                                        selector:
+                                          properties:
+                                            matchExpressions:
+                                              items:
+                                                properties:
+                                                  key:
+                                                    type: string
+                                                  operator:
+                                                    type: string
+                                                  values:
+                                                    items:
+                                                      type: string
+                                                    type: array
+                                                    x-kubernetes-list-type: atomic
+                                                required:
+                                                - key
+                                                - operator
+                                                type: object
+                                              type: array
+                                              x-kubernetes-list-type: atomic
+                                            matchLabels:
+                                              additionalProperties:
+                                                type: string
+                                              type: object
+                                          type: object
+                                          x-kubernetes-map-type: atomic
+                                        storageClassName:
+                                          type: string
+                                        volumeAttributesClassName:
+                                          type: string
+                                        volumeMode:
+                                          type: string
+                                        volumeName:
+                                          type: string
+                                      type: object
+                                  type: object
+                              type: object
+                          type: object
+                        type: array
+                    required:
+                    - cpu
                     type: object
                   labels:
                     additionalProperties:
@@ -35373,6 +36159,11 @@ spec:
                     type: object
                   route:
                     properties:
+                      group:
+                        maxLength: 63
+                        minLength: 1
+                        pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
+                        type: string
                       http:
                         properties:
                           refs:
@@ -35460,6 +36251,12 @@ spec:
                                                       maxItems: 64
                                                       type: array
                                                       x-kubernetes-list-type: set
+                                                      x-kubernetes-validations:
+                                                      - message: AllowHeaders cannot
+                                                          contain '*' alongside other
+                                                          methods
+                                                        rule: '!(''*'' in self &&
+                                                          self.size() > 1)'
                                                     allowMethods:
                                                       items:
                                                         enum:
@@ -35487,7 +36284,7 @@ spec:
                                                       items:
                                                         maxLength: 253
                                                         minLength: 1
-                                                        pattern: (^\*$)|(^([a-zA-Z][a-zA-Z0-9+\-.]+):\/\/([^:/?#]+)(:([0-9]{1,5}))?$)
+                                                        pattern: (^\*$)|(^(http(s)?):\/\/(((\*\.)?([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9-]+|\*)(:([0-9]{1,5}))?)$)
                                                         type: string
                                                       maxItems: 64
                                                       type: array
@@ -35814,6 +36611,9 @@ spec:
                                                       enum:
                                                       - 301
                                                       - 302
+                                                      - 303
+                                                      - 307
+                                                      - 308
                                                       type: integer
                                                   type: object
                                                 responseHeaderModifier:
@@ -35875,6 +36675,7 @@ spec:
                                                   - RequestRedirect
                                                   - URLRewrite
                                                   - ExtensionRef
+                                                  - CORS
                                                   type: string
                                                 urlRewrite:
                                                   properties:
@@ -35929,6 +36730,14 @@ spec:
                                               - type
                                               type: object
                                               x-kubernetes-validations:
+                                              - message: filter.cors must be nil if
+                                                  the filter.type is not CORS
+                                                rule: '!(has(self.cors) && self.type
+                                                  != ''CORS'')'
+                                              - message: filter.cors must be specified
+                                                  for CORS filter.type
+                                                rule: '!(!has(self.cors) && self.type
+                                                  == ''CORS'')'
                                               - message: filter.requestHeaderModifier
                                                   must be nil if the filter.type is
                                                   not RequestHeaderModifier
@@ -35994,6 +36803,9 @@ spec:
                                                 but not both
                                               rule: '!(self.exists(f, f.type == ''RequestRedirect'')
                                                 && self.exists(f, f.type == ''URLRewrite''))'
+                                            - message: CORS filter cannot be repeated
+                                              rule: self.filter(f, f.type == 'CORS').size()
+                                                <= 1
                                             - message: RequestHeaderModifier filter
                                                 cannot be repeated
                                               rule: self.filter(f, f.type == 'RequestHeaderModifier').size()
@@ -36067,6 +36879,11 @@ spec:
                                                 maxItems: 64
                                                 type: array
                                                 x-kubernetes-list-type: set
+                                                x-kubernetes-validations:
+                                                - message: AllowHeaders cannot contain
+                                                    '*' alongside other methods
+                                                  rule: '!(''*'' in self && self.size()
+                                                    > 1)'
                                               allowMethods:
                                                 items:
                                                   enum:
@@ -36093,7 +36910,7 @@ spec:
                                                 items:
                                                   maxLength: 253
                                                   minLength: 1
-                                                  pattern: (^\*$)|(^([a-zA-Z][a-zA-Z0-9+\-.]+):\/\/([^:/?#]+)(:([0-9]{1,5}))?$)
+                                                  pattern: (^\*$)|(^(http(s)?):\/\/(((\*\.)?([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9-]+|\*)(:([0-9]{1,5}))?)$)
                                                   type: string
                                                 maxItems: 64
                                                 type: array
@@ -36415,6 +37232,9 @@ spec:
                                                 enum:
                                                 - 301
                                                 - 302
+                                                - 303
+                                                - 307
+                                                - 308
                                                 type: integer
                                             type: object
                                           responseHeaderModifier:
@@ -36476,6 +37296,7 @@ spec:
                                             - RequestRedirect
                                             - URLRewrite
                                             - ExtensionRef
+                                            - CORS
                                             type: string
                                           urlRewrite:
                                             properties:
@@ -36505,6 +37326,14 @@ spec:
                                         - type
                                         type: object
                                         x-kubernetes-validations:
+                                        - message: filter.cors must be nil if the
+                                            filter.type is not CORS
+                                          rule: '!(has(self.cors) && self.type !=
+                                            ''CORS'')'
+                                        - message: filter.cors must be specified for
+                                            CORS filter.type
+                                          rule: '!(!has(self.cors) && self.type ==
+                                            ''CORS'')'
                                         - message: filter.requestHeaderModifier must
                                             be nil if the filter.type is not RequestHeaderModifier
                                           rule: '!(has(self.requestHeaderModifier)
@@ -36564,6 +37393,9 @@ spec:
                                           both
                                         rule: '!(self.exists(f, f.type == ''RequestRedirect'')
                                           && self.exists(f, f.type == ''URLRewrite''))'
+                                      - message: CORS filter cannot be repeated
+                                        rule: self.filter(f, f.type == 'CORS').size()
+                                          <= 1
                                       - message: RequestHeaderModifier filter cannot
                                           be repeated
                                         rule: self.filter(f, f.type == 'RequestHeaderModifier').size()
@@ -36725,6 +37557,10 @@ spec:
                                         rule: '!has(self.cookieConfig) || !has(self.cookieConfig.lifetimeType)
                                           || self.cookieConfig.lifetimeType != ''Permanent''
                                           || has(self.absoluteTimeout)'
+                                      - message: cookieConfig can only be set with
+                                          type Cookie
+                                        rule: '!has(self.cookieConfig) || self.type
+                                          == ''Cookie'''
                                     timeouts:
                                       properties:
                                         backendRequest:
@@ -36787,6 +37623,7 @@ spec:
                                       || self.matches[0].path.type != ''PathPrefix'')
                                       ? false : true) : true'
                                 maxItems: 16
+                                minItems: 1
                                 type: array
                                 x-kubernetes-list-type: atomic
                                 x-kubernetes-validations:
@@ -36817,6 +37654,11 @@ spec:
                                 type: string
                             type: object
                         type: object
+                      weight:
+                        format: int32
+                        maximum: 1000000
+                        minimum: 0
+                        type: integer
                     type: object
                   scheduler:
                     properties:
@@ -48524,9 +49366,56 @@ spec:
             - message: replicas and scaling are mutually exclusive; use scaling for
                 autoscaled deployments or replicas for static deployments
               rule: '!(has(self.replicas) && has(self.scaling))'
+          status:
+            properties:
+              annotations:
+                additionalProperties:
+                  type: string
+                type: object
+              conditions:
+                items:
+                  properties:
+                    lastTransitionTime:
+                      type: string
+                    message:
+                      type: string
+                    reason:
+                      type: string
+                    severity:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              referencedBy:
+                items:
+                  properties:
+                    name:
+                      maxLength: 253
+                      minLength: 1
+                      type: string
+                    namespace:
+                      maxLength: 63
+                      minLength: 1
+                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                      type: string
+                  type: object
+                type: array
+                x-kubernetes-list-type: atomic
+            type: object
         type: object
     served: true
     storage: true
+    subresources:
+      status: {}
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -56546,6 +57435,11 @@ spec:
                     type: object
                   route:
                     properties:
+                      group:
+                        maxLength: 63
+                        minLength: 1
+                        pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
+                        type: string
                       http:
                         properties:
                           refs:
@@ -56634,6 +57528,12 @@ spec:
                                                       maxItems: 64
                                                       type: array
                                                       x-kubernetes-list-type: set
+                                                      x-kubernetes-validations:
+                                                      - message: AllowHeaders cannot
+                                                          contain '*' alongside other
+                                                          methods
+                                                        rule: '!(''*'' in self &&
+                                                          self.size() > 1)'
                                                     allowMethods:
                                                       items:
                                                         enum:
@@ -56661,7 +57561,7 @@ spec:
                                                       items:
                                                         maxLength: 253
                                                         minLength: 1
-                                                        pattern: (^\*$)|(^([a-zA-Z][a-zA-Z0-9+\-.]+):\/\/([^:/?#]+)(:([0-9]{1,5}))?$)
+                                                        pattern: (^\*$)|(^(http(s)?):\/\/(((\*\.)?([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9-]+|\*)(:([0-9]{1,5}))?)$)
                                                         type: string
                                                       maxItems: 64
                                                       type: array
@@ -56988,6 +57888,9 @@ spec:
                                                       enum:
                                                       - 301
                                                       - 302
+                                                      - 303
+                                                      - 307
+                                                      - 308
                                                       type: integer
                                                   type: object
                                                 responseHeaderModifier:
@@ -57049,6 +57952,7 @@ spec:
                                                   - RequestRedirect
                                                   - URLRewrite
                                                   - ExtensionRef
+                                                  - CORS
                                                   type: string
                                                 urlRewrite:
                                                   properties:
@@ -57103,6 +58007,14 @@ spec:
                                               - type
                                               type: object
                                               x-kubernetes-validations:
+                                              - message: filter.cors must be nil if
+                                                  the filter.type is not CORS
+                                                rule: '!(has(self.cors) && self.type
+                                                  != ''CORS'')'
+                                              - message: filter.cors must be specified
+                                                  for CORS filter.type
+                                                rule: '!(!has(self.cors) && self.type
+                                                  == ''CORS'')'
                                               - message: filter.requestHeaderModifier
                                                   must be nil if the filter.type is
                                                   not RequestHeaderModifier
@@ -57168,6 +58080,9 @@ spec:
                                                 but not both
                                               rule: '!(self.exists(f, f.type == ''RequestRedirect'')
                                                 && self.exists(f, f.type == ''URLRewrite''))'
+                                            - message: CORS filter cannot be repeated
+                                              rule: self.filter(f, f.type == 'CORS').size()
+                                                <= 1
                                             - message: RequestHeaderModifier filter
                                                 cannot be repeated
                                               rule: self.filter(f, f.type == 'RequestHeaderModifier').size()
@@ -57241,6 +58156,11 @@ spec:
                                                 maxItems: 64
                                                 type: array
                                                 x-kubernetes-list-type: set
+                                                x-kubernetes-validations:
+                                                - message: AllowHeaders cannot contain
+                                                    '*' alongside other methods
+                                                  rule: '!(''*'' in self && self.size()
+                                                    > 1)'
                                               allowMethods:
                                                 items:
                                                   enum:
@@ -57267,7 +58187,7 @@ spec:
                                                 items:
                                                   maxLength: 253
                                                   minLength: 1
-                                                  pattern: (^\*$)|(^([a-zA-Z][a-zA-Z0-9+\-.]+):\/\/([^:/?#]+)(:([0-9]{1,5}))?$)
+                                                  pattern: (^\*$)|(^(http(s)?):\/\/(((\*\.)?([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9-]+|\*)(:([0-9]{1,5}))?)$)
                                                   type: string
                                                 maxItems: 64
                                                 type: array
@@ -57589,6 +58509,9 @@ spec:
                                                 enum:
                                                 - 301
                                                 - 302
+                                                - 303
+                                                - 307
+                                                - 308
                                                 type: integer
                                             type: object
                                           responseHeaderModifier:
@@ -57650,6 +58573,7 @@ spec:
                                             - RequestRedirect
                                             - URLRewrite
                                             - ExtensionRef
+                                            - CORS
                                             type: string
                                           urlRewrite:
                                             properties:
@@ -57702,6 +58626,14 @@ spec:
                                         - type
                                         type: object
                                         x-kubernetes-validations:
+                                        - message: filter.cors must be nil if the
+                                            filter.type is not CORS
+                                          rule: '!(has(self.cors) && self.type !=
+                                            ''CORS'')'
+                                        - message: filter.cors must be specified for
+                                            CORS filter.type
+                                          rule: '!(!has(self.cors) && self.type ==
+                                            ''CORS'')'
                                         - message: filter.requestHeaderModifier must
                                             be nil if the filter.type is not RequestHeaderModifier
                                           rule: '!(has(self.requestHeaderModifier)
@@ -57761,6 +58693,9 @@ spec:
                                           both
                                         rule: '!(self.exists(f, f.type == ''RequestRedirect'')
                                           && self.exists(f, f.type == ''URLRewrite''))'
+                                      - message: CORS filter cannot be repeated
+                                        rule: self.filter(f, f.type == 'CORS').size()
+                                          <= 1
                                       - message: RequestHeaderModifier filter cannot
                                           be repeated
                                         rule: self.filter(f, f.type == 'RequestHeaderModifier').size()
@@ -57976,6 +58911,10 @@ spec:
                                         rule: '!has(self.cookieConfig) || !has(self.cookieConfig.lifetimeType)
                                           || self.cookieConfig.lifetimeType != ''Permanent''
                                           || has(self.absoluteTimeout)'
+                                      - message: cookieConfig can only be set with
+                                          type Cookie
+                                        rule: '!has(self.cookieConfig) || self.type
+                                          == ''Cookie'''
                                     timeouts:
                                       properties:
                                         backendRequest:
@@ -58038,6 +58977,7 @@ spec:
                                       || self.matches[0].path.type != ''PathPrefix'')
                                       ? false : true) : true'
                                 maxItems: 16
+                                minItems: 1
                                 type: array
                                 x-kubernetes-list-type: atomic
                                 x-kubernetes-validations:
@@ -58068,6 +59008,11 @@ spec:
                                 type: string
                             type: object
                         type: object
+                      weight:
+                        format: int32
+                        maximum: 1000000
+                        minimum: 0
+                        type: integer
                     type: object
                   scheduler:
                     properties:
@@ -69961,6 +70906,142 @@ spec:
                   type: object
                   x-kubernetes-map-type: atomic
                 type: array
+              kvCacheOffloading:
+                properties:
+                  cpu:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  evictionPolicy:
+                    default: lru
+                    enum:
+                    - lru
+                    - arc
+                    type: string
+                  secondary:
+                    items:
+                      properties:
+                        fileSystem:
+                          properties:
+                            emptyDir:
+                              properties:
+                                size:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                              required:
+                              - size
+                              type: object
+                            pvc:
+                              properties:
+                                ref:
+                                  properties:
+                                    name:
+                                      type: string
+                                    path:
+                                      type: string
+                                  required:
+                                  - name
+                                  type: object
+                                spec:
+                                  properties:
+                                    accessModes:
+                                      items:
+                                        type: string
+                                      type: array
+                                      x-kubernetes-list-type: atomic
+                                    dataSource:
+                                      properties:
+                                        apiGroup:
+                                          type: string
+                                        kind:
+                                          type: string
+                                        name:
+                                          type: string
+                                      required:
+                                      - kind
+                                      - name
+                                      type: object
+                                      x-kubernetes-map-type: atomic
+                                    dataSourceRef:
+                                      properties:
+                                        apiGroup:
+                                          type: string
+                                        kind:
+                                          type: string
+                                        name:
+                                          type: string
+                                        namespace:
+                                          type: string
+                                      required:
+                                      - kind
+                                      - name
+                                      type: object
+                                    resources:
+                                      properties:
+                                        limits:
+                                          additionalProperties:
+                                            anyOf:
+                                            - type: integer
+                                            - type: string
+                                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                            x-kubernetes-int-or-string: true
+                                          type: object
+                                        requests:
+                                          additionalProperties:
+                                            anyOf:
+                                            - type: integer
+                                            - type: string
+                                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                            x-kubernetes-int-or-string: true
+                                          type: object
+                                      type: object
+                                    selector:
+                                      properties:
+                                        matchExpressions:
+                                          items:
+                                            properties:
+                                              key:
+                                                type: string
+                                              operator:
+                                                type: string
+                                              values:
+                                                items:
+                                                  type: string
+                                                type: array
+                                                x-kubernetes-list-type: atomic
+                                            required:
+                                            - key
+                                            - operator
+                                            type: object
+                                          type: array
+                                          x-kubernetes-list-type: atomic
+                                        matchLabels:
+                                          additionalProperties:
+                                            type: string
+                                          type: object
+                                      type: object
+                                      x-kubernetes-map-type: atomic
+                                    storageClassName:
+                                      type: string
+                                    volumeAttributesClassName:
+                                      type: string
+                                    volumeMode:
+                                      type: string
+                                    volumeName:
+                                      type: string
+                                  type: object
+                              type: object
+                          type: object
+                      type: object
+                    type: array
+                required:
+                - cpu
+                type: object
               labels:
                 additionalProperties:
                   type: string
@@ -70031,6 +71112,142 @@ spec:
                   annotations:
                     additionalProperties:
                       type: string
+                    type: object
+                  kvCacheOffloading:
+                    properties:
+                      cpu:
+                        anyOf:
+                        - type: integer
+                        - type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                      evictionPolicy:
+                        default: lru
+                        enum:
+                        - lru
+                        - arc
+                        type: string
+                      secondary:
+                        items:
+                          properties:
+                            fileSystem:
+                              properties:
+                                emptyDir:
+                                  properties:
+                                    size:
+                                      anyOf:
+                                      - type: integer
+                                      - type: string
+                                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                      x-kubernetes-int-or-string: true
+                                  required:
+                                  - size
+                                  type: object
+                                pvc:
+                                  properties:
+                                    ref:
+                                      properties:
+                                        name:
+                                          type: string
+                                        path:
+                                          type: string
+                                      required:
+                                      - name
+                                      type: object
+                                    spec:
+                                      properties:
+                                        accessModes:
+                                          items:
+                                            type: string
+                                          type: array
+                                          x-kubernetes-list-type: atomic
+                                        dataSource:
+                                          properties:
+                                            apiGroup:
+                                              type: string
+                                            kind:
+                                              type: string
+                                            name:
+                                              type: string
+                                          required:
+                                          - kind
+                                          - name
+                                          type: object
+                                          x-kubernetes-map-type: atomic
+                                        dataSourceRef:
+                                          properties:
+                                            apiGroup:
+                                              type: string
+                                            kind:
+                                              type: string
+                                            name:
+                                              type: string
+                                            namespace:
+                                              type: string
+                                          required:
+                                          - kind
+                                          - name
+                                          type: object
+                                        resources:
+                                          properties:
+                                            limits:
+                                              additionalProperties:
+                                                anyOf:
+                                                - type: integer
+                                                - type: string
+                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                x-kubernetes-int-or-string: true
+                                              type: object
+                                            requests:
+                                              additionalProperties:
+                                                anyOf:
+                                                - type: integer
+                                                - type: string
+                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                x-kubernetes-int-or-string: true
+                                              type: object
+                                          type: object
+                                        selector:
+                                          properties:
+                                            matchExpressions:
+                                              items:
+                                                properties:
+                                                  key:
+                                                    type: string
+                                                  operator:
+                                                    type: string
+                                                  values:
+                                                    items:
+                                                      type: string
+                                                    type: array
+                                                    x-kubernetes-list-type: atomic
+                                                required:
+                                                - key
+                                                - operator
+                                                type: object
+                                              type: array
+                                              x-kubernetes-list-type: atomic
+                                            matchLabels:
+                                              additionalProperties:
+                                                type: string
+                                              type: object
+                                          type: object
+                                          x-kubernetes-map-type: atomic
+                                        storageClassName:
+                                          type: string
+                                        volumeAttributesClassName:
+                                          type: string
+                                        volumeMode:
+                                          type: string
+                                        volumeName:
+                                          type: string
+                                      type: object
+                                  type: object
+                              type: object
+                          type: object
+                        type: array
+                    required:
+                    - cpu
                     type: object
                   labels:
                     additionalProperties:
@@ -77910,6 +79127,11 @@ spec:
                     type: object
                   route:
                     properties:
+                      group:
+                        maxLength: 63
+                        minLength: 1
+                        pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
+                        type: string
                       http:
                         properties:
                           refs:
@@ -77998,6 +79220,12 @@ spec:
                                                       maxItems: 64
                                                       type: array
                                                       x-kubernetes-list-type: set
+                                                      x-kubernetes-validations:
+                                                      - message: AllowHeaders cannot
+                                                          contain '*' alongside other
+                                                          methods
+                                                        rule: '!(''*'' in self &&
+                                                          self.size() > 1)'
                                                     allowMethods:
                                                       items:
                                                         enum:
@@ -78025,7 +79253,7 @@ spec:
                                                       items:
                                                         maxLength: 253
                                                         minLength: 1
-                                                        pattern: (^\*$)|(^([a-zA-Z][a-zA-Z0-9+\-.]+):\/\/([^:/?#]+)(:([0-9]{1,5}))?$)
+                                                        pattern: (^\*$)|(^(http(s)?):\/\/(((\*\.)?([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9-]+|\*)(:([0-9]{1,5}))?)$)
                                                         type: string
                                                       maxItems: 64
                                                       type: array
@@ -78352,6 +79580,9 @@ spec:
                                                       enum:
                                                       - 301
                                                       - 302
+                                                      - 303
+                                                      - 307
+                                                      - 308
                                                       type: integer
                                                   type: object
                                                 responseHeaderModifier:
@@ -78413,6 +79644,7 @@ spec:
                                                   - RequestRedirect
                                                   - URLRewrite
                                                   - ExtensionRef
+                                                  - CORS
                                                   type: string
                                                 urlRewrite:
                                                   properties:
@@ -78467,6 +79699,14 @@ spec:
                                               - type
                                               type: object
                                               x-kubernetes-validations:
+                                              - message: filter.cors must be nil if
+                                                  the filter.type is not CORS
+                                                rule: '!(has(self.cors) && self.type
+                                                  != ''CORS'')'
+                                              - message: filter.cors must be specified
+                                                  for CORS filter.type
+                                                rule: '!(!has(self.cors) && self.type
+                                                  == ''CORS'')'
                                               - message: filter.requestHeaderModifier
                                                   must be nil if the filter.type is
                                                   not RequestHeaderModifier
@@ -78532,6 +79772,9 @@ spec:
                                                 but not both
                                               rule: '!(self.exists(f, f.type == ''RequestRedirect'')
                                                 && self.exists(f, f.type == ''URLRewrite''))'
+                                            - message: CORS filter cannot be repeated
+                                              rule: self.filter(f, f.type == 'CORS').size()
+                                                <= 1
                                             - message: RequestHeaderModifier filter
                                                 cannot be repeated
                                               rule: self.filter(f, f.type == 'RequestHeaderModifier').size()
@@ -78605,6 +79848,11 @@ spec:
                                                 maxItems: 64
                                                 type: array
                                                 x-kubernetes-list-type: set
+                                                x-kubernetes-validations:
+                                                - message: AllowHeaders cannot contain
+                                                    '*' alongside other methods
+                                                  rule: '!(''*'' in self && self.size()
+                                                    > 1)'
                                               allowMethods:
                                                 items:
                                                   enum:
@@ -78631,7 +79879,7 @@ spec:
                                                 items:
                                                   maxLength: 253
                                                   minLength: 1
-                                                  pattern: (^\*$)|(^([a-zA-Z][a-zA-Z0-9+\-.]+):\/\/([^:/?#]+)(:([0-9]{1,5}))?$)
+                                                  pattern: (^\*$)|(^(http(s)?):\/\/(((\*\.)?([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9-]+|\*)(:([0-9]{1,5}))?)$)
                                                   type: string
                                                 maxItems: 64
                                                 type: array
@@ -78953,6 +80201,9 @@ spec:
                                                 enum:
                                                 - 301
                                                 - 302
+                                                - 303
+                                                - 307
+                                                - 308
                                                 type: integer
                                             type: object
                                           responseHeaderModifier:
@@ -79014,6 +80265,7 @@ spec:
                                             - RequestRedirect
                                             - URLRewrite
                                             - ExtensionRef
+                                            - CORS
                                             type: string
                                           urlRewrite:
                                             properties:
@@ -79066,6 +80318,14 @@ spec:
                                         - type
                                         type: object
                                         x-kubernetes-validations:
+                                        - message: filter.cors must be nil if the
+                                            filter.type is not CORS
+                                          rule: '!(has(self.cors) && self.type !=
+                                            ''CORS'')'
+                                        - message: filter.cors must be specified for
+                                            CORS filter.type
+                                          rule: '!(!has(self.cors) && self.type ==
+                                            ''CORS'')'
                                         - message: filter.requestHeaderModifier must
                                             be nil if the filter.type is not RequestHeaderModifier
                                           rule: '!(has(self.requestHeaderModifier)
@@ -79125,6 +80385,9 @@ spec:
                                           both
                                         rule: '!(self.exists(f, f.type == ''RequestRedirect'')
                                           && self.exists(f, f.type == ''URLRewrite''))'
+                                      - message: CORS filter cannot be repeated
+                                        rule: self.filter(f, f.type == 'CORS').size()
+                                          <= 1
                                       - message: RequestHeaderModifier filter cannot
                                           be repeated
                                         rule: self.filter(f, f.type == 'RequestHeaderModifier').size()
@@ -79340,6 +80603,10 @@ spec:
                                         rule: '!has(self.cookieConfig) || !has(self.cookieConfig.lifetimeType)
                                           || self.cookieConfig.lifetimeType != ''Permanent''
                                           || has(self.absoluteTimeout)'
+                                      - message: cookieConfig can only be set with
+                                          type Cookie
+                                        rule: '!has(self.cookieConfig) || self.type
+                                          == ''Cookie'''
                                     timeouts:
                                       properties:
                                         backendRequest:
@@ -79402,6 +80669,7 @@ spec:
                                       || self.matches[0].path.type != ''PathPrefix'')
                                       ? false : true) : true'
                                 maxItems: 16
+                                minItems: 1
                                 type: array
                                 x-kubernetes-list-type: atomic
                                 x-kubernetes-validations:
@@ -79432,6 +80700,11 @@ spec:
                                 type: string
                             type: object
                         type: object
+                      weight:
+                        format: int32
+                        maximum: 1000000
+                        minimum: 0
+                        type: integer
                     type: object
                   scheduler:
                     properties:
@@ -91322,6 +92595,65 @@ spec:
                       type: object
                     type: array
                     x-kubernetes-list-type: atomic
+                  group:
+                    properties:
+                      members:
+                        items:
+                          properties:
+                            backendRef:
+                              properties:
+                                group:
+                                  default: ""
+                                  maxLength: 253
+                                  pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                  type: string
+                                kind:
+                                  default: Service
+                                  maxLength: 63
+                                  minLength: 1
+                                  pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$
+                                  type: string
+                                name:
+                                  maxLength: 253
+                                  minLength: 1
+                                  type: string
+                                namespace:
+                                  maxLength: 63
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                  type: string
+                                port:
+                                  format: int32
+                                  maximum: 65535
+                                  minimum: 1
+                                  type: integer
+                              required:
+                              - name
+                              type: object
+                              x-kubernetes-validations:
+                              - message: Must have port for Service reference
+                                rule: '(size(self.group) == 0 && self.kind == ''Service'')
+                                  ? has(self.port) : true'
+                            name:
+                              type: string
+                            stopped:
+                              type: boolean
+                            weight:
+                              format: int32
+                              type: integer
+                          required:
+                          - name
+                          - weight
+                          type: object
+                        type: array
+                        x-kubernetes-list-map-keys:
+                        - name
+                        x-kubernetes-list-type: map
+                      name:
+                        type: string
+                    required:
+                    - name
+                    type: object
                   scheduler:
                     properties:
                       inferencePool:
@@ -91388,6 +92720,9 @@ spec:
                         type: string
                       name:
                         type: string
+                      readyReplicas:
+                        format: int32
+                        type: integer
                     required:
                     - kind
                     - name
@@ -91401,6 +92736,9 @@ spec:
                         type: string
                       name:
                         type: string
+                      readyReplicas:
+                        format: int32
+                        type: integer
                     required:
                     - kind
                     - name
@@ -91414,6 +92752,9 @@ spec:
                         type: string
                       name:
                         type: string
+                      readyReplicas:
+                        format: int32
+                        type: integer
                     required:
                     - kind
                     - name
@@ -91662,6 +93003,15 @@ rules:
   - update
   - watch
 - apiGroups:
+  - llm-d.ai
+  resources:
+  - inferencemodelrewrites
+  - inferenceobjectives
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - llmd.ai
   resources:
   - variantautoscalings
@@ -91748,6 +93098,7 @@ rules:
 - apiGroups:
   - serving.kserve.io
   resources:
+  - llminferenceserviceconfigs/status
   - llminferenceservices/status
   verbs:
   - get
@@ -91945,6 +93296,8 @@ data:
            "caBundleConfigMapName": "",
            "caBundleVolumeMountPath": "/etc/ssl/custom-certs",
            "enableModelcar": false,
+           "enableOciModelSupport": false,
+           "ociModelMode": "modelcar",
            "cpuModelcar": "10m",
            "memoryModelcar": "15Mi"
        }
@@ -91974,6 +93327,14 @@ data:
            # enableModelcar enabled allows you to directly access an OCI container image by
            # using a source URL with an "oci://" schema.
            "enableModelcar": false,
+
+           # enableOciModelSupport enables any OCI-backed model storage path (modelcar, native ImageVolume, or fetch).
+           # This is the newer master switch; enableModelcar is kept as a backcompat alias for the "modelcar" mode.
+           "enableOciModelSupport": false,
+
+           # ociModelMode selects the materialization strategy when a storageUri uses oci:// without an explicit
+           # suffix. Valid values: "modelcar" (default sidecar), "native" (K8s ImageVolume), "fetch" (init-container).
+           "ociModelMode": "modelcar",
 
            # cpuModelcar is the cpu request and limit that is used for the passive modelcar container. It can be
            # set very low, but should be allowed by any Kubernetes LimitRange that might apply.
