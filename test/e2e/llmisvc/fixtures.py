@@ -43,6 +43,7 @@ SCHEDULER_CONFIGMAP_NAME = "scheduler-config-e2e"
 SCHEDULER_CONFIGMAP_KEY = "epp"
 
 OPT_125M_MODEL_URI = os.environ.get("OPT_125M_MODEL_URI", "hf://facebook/opt-125m")
+VLLM_CPU_IMAGE = os.environ.get("VLLM_CPU_IMAGE", "vllm/vllm-openai-cpu:v0.19.0")
 
 # PVC storage test constants
 PVC_STORAGE_NAME = "e2e-pvc-model-storage"
@@ -89,6 +90,23 @@ UPSTREAM_K8S_VLLM_ENV_OVERRIDES = [
     {"name": "USER", "value": "nonroot"},
     {"name": "TORCHINDUCTOR_CACHE_DIR", "value": "/tmp/torchinductor-cache"},
 ]
+
+LLMD_SIMULATOR_SECURITY_CONTEXT = {
+    "runAsNonRoot": True,
+    "runAsUser": 65532,
+    "runAsGroup": 65532,
+}
+
+# Default annotations applied to every LLMInferenceService created by the
+# test harness. Set LLMISVC_DEFAULT_ANNOTATIONS as a JSON object in CI to
+# inject platform-specific annotations without modifying test code.
+try:
+    DEFAULT_LLMISVC_ANNOTATIONS = json.loads(
+        os.environ.get("LLMISVC_DEFAULT_ANNOTATIONS", "{}")
+    )
+except (json.JSONDecodeError, TypeError):
+    DEFAULT_LLMISVC_ANNOTATIONS = {}
+
 
 STORAGE_INITIALIZER_INIT_CONTAINER = {
     "name": "storage-initializer",
@@ -271,7 +289,7 @@ LLMINFERENCESERVICE_CONFIGS = {
             "containers": [
                 {
                     "name": "main",
-                    "image": "public.ecr.aws/q9t5s3a7/vllm-cpu-release-repo:v0.19.0",
+                    "image": VLLM_CPU_IMAGE,
                     "env": [
                         {"name": "VLLM_LOGGING_LEVEL", "value": "DEBUG"},
                         {"name": "VLLM_CPU_KVCACHE_SPACE", "value": "1"},
@@ -293,7 +311,7 @@ LLMINFERENCESERVICE_CONFIGS = {
             "containers": [
                 {
                     "name": "main",
-                    "image": "public.ecr.aws/q9t5s3a7/vllm-cpu-release-repo:v0.19.0",
+                    "image": VLLM_CPU_IMAGE,
                     "env": [
                         {"name": "VLLM_LOGGING_LEVEL", "value": "DEBUG"},
                         {"name": "VLLM_CPU_KVCACHE_SPACE", "value": "1"},
@@ -328,7 +346,7 @@ LLMINFERENCESERVICE_CONFIGS = {
                 "containers": [
                     {
                         "name": "main",
-                        "image": "public.ecr.aws/q9t5s3a7/vllm-cpu-release-repo:v0.19.0",
+                        "image": VLLM_CPU_IMAGE,
                         "env": [
                             {"name": "VLLM_LOGGING_LEVEL", "value": "DEBUG"},
                             {"name": "VLLM_CPU_KVCACHE_SPACE", "value": "1"},
@@ -624,7 +642,7 @@ LLMINFERENCESERVICE_CONFIGS = {
             "containers": [
                 {
                     "name": "main",
-                    "image": "public.ecr.aws/q9t5s3a7/vllm-cpu-release-repo:v0.19.0",
+                    "image": VLLM_CPU_IMAGE,
                     "command": ["vllm", "serve", "/mnt/models"],
                     "args": [
                         "--served-model-name",
@@ -655,7 +673,7 @@ LLMINFERENCESERVICE_CONFIGS = {
             "containers": [
                 {
                     "name": "main",
-                    "image": "public.ecr.aws/q9t5s3a7/vllm-cpu-release-repo:v0.19.0",
+                    "image": VLLM_CPU_IMAGE,
                     "command": ["vllm", "serve", "/mnt/models"],
                     "args": [
                         "--served-model-name",
@@ -710,7 +728,7 @@ LLMINFERENCESERVICE_CONFIGS = {
             "scheduler": {
                 "config": {
                     "inline": {
-                        "apiVersion": "inference.networking.x-k8s.io/v1alpha1",
+                        "apiVersion": "llm-d.ai/v1alpha1",
                         "kind": "EndpointPickerConfig",
                         "plugins": [
                             {"type": "single-profile-handler"},
@@ -738,7 +756,7 @@ LLMINFERENCESERVICE_CONFIGS = {
             "scheduler": {
                 "config": {
                     "inline": {
-                        "apiVersion": "inference.networking.x-k8s.io/v1alpha1",
+                        "apiVersion": "llm-d.ai/v1alpha1",
                         "kind": "EndpointPickerConfig",
                         "plugins": [
                             {"type": "single-profile-handler"},
@@ -789,6 +807,68 @@ LLMINFERENCESERVICE_CONFIGS = {
             },
         },
     },
+    # Clean-path: token-producer in inline config triggers standalone tokenizer
+    # deployment automatically. The controller injects modelName and vllm.url
+    # into the token-producer plugin parameters.
+    "scheduler-with-tokenizer-kvcache": {
+        "router": {
+            "scheduler": {
+                "config": {
+                    "inline": {
+                        "apiVersion": "inference.networking.x-k8s.io/v1alpha1",
+                        "kind": "EndpointPickerConfig",
+                        "plugins": [
+                            {"type": "single-profile-handler"},
+                            {"type": "token-producer"},
+                            {
+                                "type": "precise-prefix-cache-producer",
+                                "parameters": {
+                                    "tokenProcessorConfig": {
+                                        "blockSize": 64,
+                                    },
+                                    "kvEventsConfig": {
+                                        "topicFilter": "kv@",
+                                        "discoverPods": True,
+                                        "podDiscoveryConfig": {
+                                            "socketPort": 5557,
+                                        },
+                                    },
+                                    "indexerConfig": {
+                                        "kvBlockIndexConfig": {
+                                            "enableMetrics": True,
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                "type": "prefix-cache-scorer",
+                                "parameters": {
+                                    "prefixMatchInfoProducerName": "precise-prefix-cache-producer",
+                                },
+                            },
+                            {"type": "kv-cache-utilization-scorer"},
+                            {"type": "queue-scorer"},
+                            {"type": "max-score-picker"},
+                        ],
+                        "schedulingProfiles": [
+                            {
+                                "name": "default",
+                                "plugins": [
+                                    {"pluginRef": "prefix-cache-scorer", "weight": 3},
+                                    {
+                                        "pluginRef": "kv-cache-utilization-scorer",
+                                        "weight": 2,
+                                    },
+                                    {"pluginRef": "queue-scorer", "weight": 2},
+                                    {"pluginRef": "max-score-picker"},
+                                ],
+                            },
+                        ],
+                    },
+                },
+            },
+        },
+    },
     # Realistic v0.6-style PD config: old plugin names, deciderPluginName param,
     # hashBlockSize, prefill/decode filters and profiles.
     # Exercises the full #5433 migration: plugin renames, param restructure,
@@ -798,7 +878,7 @@ LLMINFERENCESERVICE_CONFIGS = {
             "scheduler": {
                 "config": {
                     "inline": {
-                        "apiVersion": "inference.networking.x-k8s.io/v1alpha1",
+                        "apiVersion": "llm-d.ai/v1alpha1",
                         "kind": "EndpointPickerConfig",
                         "plugins": [
                             {"type": "prefill-header-handler"},
@@ -854,7 +934,7 @@ LLMINFERENCESERVICE_CONFIGS = {
             "scheduler": {
                 "config": {
                     "inline": {
-                        "apiVersion": "inference.networking.x-k8s.io/v1alpha1",
+                        "apiVersion": "llm-d.ai/v1alpha1",
                         "kind": "EndpointPickerConfig",
                         "plugins": [
                             {"type": "prefill-header-handler"},
@@ -977,7 +1057,7 @@ LLMINFERENCESERVICE_CONFIGS = {
                                 "vllm:kv_cache_usage_perc",
                                 "--config-text",
                                 (
-                                    "apiVersion: inference.networking.x-k8s.io/v1alpha1\n"
+                                    "apiVersion: llm-d.ai/v1alpha1\n"
                                     "kind: EndpointPickerConfig\n"
                                     "plugins:\n"
                                     "- type: single-profile-handler\n"
@@ -1367,7 +1447,7 @@ LLMINFERENCESERVICE_CONFIGS = {
             "scheduler": {
                 "config": {
                     "inline": {
-                        "apiVersion": "inference.networking.x-k8s.io/v1alpha1",
+                        "apiVersion": "llm-d.ai/v1alpha1",
                         "kind": "EndpointPickerConfig",
                         "featureGates": ["flowControl"],
                         "plugins": [
@@ -1426,7 +1506,7 @@ LLMINFERENCESERVICE_CONFIGS = {
             "scheduler": {
                 "config": {
                     "inline": {
-                        "apiVersion": "inference.networking.x-k8s.io/v1alpha1",
+                        "apiVersion": "llm-d.ai/v1alpha1",
                         "kind": "EndpointPickerConfig",
                         "featureGates": ["flowControl"],
                         "plugins": [
@@ -1706,7 +1786,7 @@ def inject_k8s_proxy():
 
 
 # Scheduler config YAML used for ConfigMap ref tests
-SCHEDULER_CONFIG_YAML = """apiVersion: inference.networking.x-k8s.io/v1alpha1
+SCHEDULER_CONFIG_YAML = """apiVersion: llm-d.ai/v1alpha1
 kind: EndpointPickerConfig
 plugins:
 - type: single-profile-handler
