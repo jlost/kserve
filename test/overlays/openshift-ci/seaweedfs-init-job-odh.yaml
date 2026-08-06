@@ -7,7 +7,8 @@ spec:
     spec:
       initContainers:
       - name: download-hf-model
-        image: kserve/storage-initializer:latest
+        image: local/storage-initializer:dev
+        imagePullPolicy: Never
         command:
         - python3
         - -c
