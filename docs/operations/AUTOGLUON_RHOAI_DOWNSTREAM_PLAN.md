@@ -105,13 +105,13 @@ sync. The release-aware workflow may update only the two generated files.
 Command:
 
 ```bash
-uv run hack/rhoai/generate_autogluon.py \
-  --project python/autogluonserver/pyproject.rhoai.toml \
-  --output-dir python/autogluonserver
+uv run hack/rhoai/generate_autogluon.py
 ```
 
 `--check` generates into a temporary workspace, compares both outputs, and
-never modifies the working tree.
+never modifies the working tree. `--project` and `--output-dir` remain
+available for alternate projects and tests; omitted options use the repository
+root and canonical AutoGluon paths.
 
 Generator requirements:
 
