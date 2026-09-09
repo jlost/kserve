@@ -2,8 +2,8 @@
 
 **Status:** implementation-ready for `rhoai-3.6-ea.2`
 **Updated:** 2026-09-09
-**Implementation:** `red-hat-data-services/kserve` `main` and active `rhoai-*`
-release branches
+**Implementation:** `red-hat-data-services/kserve` `main` and active
+`rhoai-[0-9].[0-9]**` release branches
 
 ## 1. Decision and contract
 
@@ -32,8 +32,9 @@ KServe main source + RHOAI project
 ```
 
 Regeneration is eventually consistent and branch-aware. It regenerates after
-every `main` push and converges `rhoai-*` branches after merged release PRs;
-direct release-branch pushes do not trigger it. This follows the
+relevant `main` pushes and converges `rhoai-[0-9].[0-9]**` branches after
+merged release PRs that touch relevant files; direct release-branch pushes do
+not trigger it. This follows the
 event-handling pattern in
 [WVA #236](https://github.com/red-hat-data-services/workload-variant-autoscaler/pull/236/changes).
 
@@ -147,19 +148,36 @@ working tree in check mode.
 ## 5. Release-aware regeneration workflow
 
 Modify `.github/workflows/autogluon-rhoai-update.yml` to support four event
-classes. Pull requests run read-only generator-contract tests; every `main`
-push and only merged release PRs can regenerate or push artifacts. An optional
-manual dispatch uses the same generic generation path.
+classes. Pull requests run read-only generator-contract tests; relevant
+`main` pushes and only merged release PRs that touch relevant files can
+regenerate or push artifacts. An optional manual dispatch uses the same
+generic generation path.
 
 ```yaml
 on:
   push:
     branches:
       - main
+    paths:
+      - python/autogluonserver/pyproject.rhoai.toml
+      - python/autogluonserver/uv.rhoai.lock
+      - python/autogluonserver/autogluon-all-requirements.txt
+      - python/kserve/pyproject.toml
+      - python/storage/pyproject.toml
+      - hack/rhoai/*.py
+      - .github/workflows/autogluon-rhoai-update.yml
 
   pull_request_target:
     types: [closed]
-    branches: ['rhoai-*']
+    branches: ['rhoai-[0-9].[0-9]**']
+    paths:
+      - python/autogluonserver/pyproject.rhoai.toml
+      - python/autogluonserver/uv.rhoai.lock
+      - python/autogluonserver/autogluon-all-requirements.txt
+      - python/kserve/pyproject.toml
+      - python/storage/pyproject.toml
+      - hack/rhoai/*.py
+      - .github/workflows/autogluon-rhoai-update.yml
 
   pull_request:
     paths:
@@ -174,22 +192,23 @@ on:
   workflow_dispatch:
 ```
 
-The `main` push has no path filter, so every push starts the workflow. A
-generated-only bot push reruns the workflow but exits successfully without a
-second commit because the outputs are already current. Release generation is
-automatically available from the merged `pull_request_target` event; direct
-pushes to `rhoai-*` do not start this workflow. `workflow_dispatch` is retained
-as an operator recovery option, but follows the same generation job and has no
-dispatch-specific branch, approval, or token logic. The read-only `pull_request`
-test includes generated outputs so stale artifacts fail review without
-receiving write credentials.
+The `main` push and merged release-PR events use the same relevant-file path
+set as the read-only pull-request test. A generated-only bot push therefore
+reruns the workflow but exits successfully without a second commit because the
+outputs are already current. Release generation is automatically available
+from merged `pull_request_target` events targeting
+`rhoai-[0-9].[0-9]**`; direct pushes to those branches do not start this
+workflow. `workflow_dispatch` is retained as an operator recovery option, but
+follows the same generation job and has no dispatch-specific branch, approval,
+or token logic. The read-only `pull_request` test includes generated outputs
+so stale artifacts fail review without receiving write credentials.
 
 ### Event behavior
 
 | Event | Target branch | Checkout revision | Condition |
 | --- | --- | --- | --- |
-| `push` on `main` | `github.ref_name` | `github.sha` | always |
-| merged `pull_request_target` | PR base branch | `merge_commit_sha` | merged only |
+| `push` on `main` | `github.ref_name` | `github.sha` | relevant paths |
+| merged `pull_request_target` | PR base branch | `merge_commit_sha` | merged + relevant paths |
 | `pull_request` | no branch write | PR merge ref | read-only tests only |
 | `workflow_dispatch` | selected branch | `github.sha` | generic generation path |
 
@@ -257,7 +276,7 @@ Existing Konflux PipelineRuns continue consuming the stable
 required for the supported flow:
 
 - implementation PR includes current generated artifacts;
-- main regeneration updates outputs after every push;
+- main regeneration updates outputs after every relevant-file push;
 - main-to-release sync copies source and current outputs; and
 - merged release-PR regeneration repairs any branch drift.
 
@@ -298,8 +317,8 @@ KServe-main-to-release sync must ignore only:
 kserve-module/prefetched-manifests-rhoai/**
 ```
 
-AutoGluon files must flow from `main` to active `rhoai-*` branches. WVA and
-model-controller remain owners of their prefetched-manifest subtrees.
+AutoGluon files must flow from `main` to active `rhoai-[0-9].[0-9]**` branches.
+WVA and model-controller remain owners of their prefetched-manifest subtrees.
 
 ## 9. Rollout
 
@@ -308,8 +327,8 @@ model-controller remain owners of their prefetched-manifest subtrees.
 3. Validate workflow YAML and inspect event expressions.
 4. Run the existing AutoGluon PR build.
 5. Merge the KServe-main implementation with generated artifacts included.
-6. Confirm one regeneration bot commit on `main`, or a no-op when outputs are
-   current.
+6. Confirm one regeneration bot commit on `main` after a relevant change, or a
+   no-op when outputs are current.
 7. Test a controlled release-branch change in a non-production branch:
    verify merged-PR handling, branch-local output commit, direct-push
    non-triggering, and no regeneration loop.
@@ -340,9 +359,9 @@ artifacts before treating the change as released:
    no public PyPI artifact URLs, and the four required platform markers.
 5. Confirm the subsequent Konflux build uses the bot commit, then promote only
    that generated-artifact revision.
-6. Repeat steps 1–5 for a controlled `rhoai-*` branch change, covering a
-   merged release PR and confirming that a direct release-branch push does not
-   trigger this workflow.
+6. Repeat steps 1–5 for a controlled `rhoai-[0-9].[0-9]**` branch change,
+   covering a merged relevant release PR and confirming that a direct
+   release-branch push does not trigger this workflow.
 
 ## 10. Acceptance criteria
 
@@ -350,13 +369,15 @@ artifacts before treating the change as released:
 
 - Relevant pull requests run read-only generator-contract tests.
 - Pull-request test jobs cannot create App tokens or push branches.
-- Every push on `main` starts the workflow and regenerates the two outputs when
-  they are stale.
+- Relevant-file pushes on `main` start the workflow and regenerate the two
+  outputs when they are stale.
 - `workflow_dispatch` uses the same generation job as automatic events, without
   a dispatch-specific code path or approval gate.
 - Merged release PR runs against its merge SHA, not PR head.
 - Closed, unmerged release PR does nothing.
-- Direct push to `rhoai-*` does not start this workflow.
+- Merged relevant-file release PRs targeting `rhoai-[0-9].[0-9]**` start the
+  workflow.
+- Direct push to `rhoai-[0-9].[0-9]**` does not start this workflow.
 - Generated-only bot push produces a successful no-op, not a second commit.
 - Concurrent updates rerun generation from latest branch state.
 - Bot commit stages no file outside the two generated outputs.
