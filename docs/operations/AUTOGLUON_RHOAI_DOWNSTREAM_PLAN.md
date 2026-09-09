@@ -166,7 +166,6 @@ on:
       - python/storage/pyproject.toml
       - hack/rhoai/*.py
       - .github/workflows/autogluon-rhoai-update.yml
-      - kserve-deps.env
 
   pull_request_target:
     types: [closed]
@@ -179,7 +178,6 @@ on:
       - python/storage/pyproject.toml
       - hack/rhoai/*.py
       - .github/workflows/autogluon-rhoai-update.yml
-      - kserve-deps.env
 
   pull_request:
     paths:
@@ -190,7 +188,6 @@ on:
       - python/storage/pyproject.toml
       - hack/rhoai/*.py
       - .github/workflows/autogluon-rhoai-update.yml
-      - kserve-deps.env
 
   workflow_dispatch:
 ```
