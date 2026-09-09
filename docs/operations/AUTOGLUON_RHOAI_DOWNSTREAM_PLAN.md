@@ -202,7 +202,7 @@ inputs and do not trigger regeneration.
 | `push` on `rhoai-*` | `github.ref_name` | `github.sha` | always |
 | merged `pull_request_target` | PR base branch | `merge_commit_sha` | merged only |
 | `pull_request` | no branch write | PR merge ref | read-only tests only |
-| `workflow_dispatch` | selected branch | selected branch head | always |
+| `workflow_dispatch` | selected `main`/`rhoai-*` branch | selected branch head | protected-environment approval |
 
 For `pull_request_target`:
 
@@ -210,6 +210,18 @@ For `pull_request_target`:
 - skip unless `github.event.pull_request.merged == true`;
 - check out the merge commit, never the untrusted PR head; and
 - push only to the PR base branch.
+
+For `workflow_dispatch`:
+
+- permit only `main` and `rhoai-*` refs;
+- require approval from the protected `autogluon-manual-regeneration`
+  environment before starting the mutating job; and
+- create the write-capable App token only after that approval.
+
+Manual dispatch remains available for recovery and release-branch repair, but
+an arbitrary branch cannot cause a write-token job to run. Configure the
+environment with the repository's trusted release maintainers as required
+reviewers; automatic `push` and merged-PR runs must not require that approval.
 
 Use a branch-specific concurrency key:
 
@@ -364,7 +376,9 @@ artifacts before treating the change as released:
 - Relevant input push on `rhoai-*` regenerates the two outputs on that branch.
 - Merged release PR runs against its merge SHA, not PR head.
 - Closed, unmerged release PR does nothing.
-- Manual dispatch targets selected branch.
+- Manual dispatch on `main` or `rhoai-*` targets the selected branch after
+  protected-environment approval.
+- Manual dispatch on any other branch cannot create an App token or push.
 - Generated-only bot commit does not trigger regeneration.
 - Concurrent updates rerun generation from latest branch state.
 - Bot commit stages no file outside the two generated outputs.
