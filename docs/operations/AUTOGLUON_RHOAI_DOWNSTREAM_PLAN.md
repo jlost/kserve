@@ -146,9 +146,10 @@ working tree in check mode.
 
 ## 5. Release-aware regeneration workflow
 
-Modify `.github/workflows/autogluon-rhoai-update.yml` to support three event
+Modify `.github/workflows/autogluon-rhoai-update.yml` to support four event
 classes. Pull requests run read-only generator-contract tests; every `main`
-push and only merged release PRs can regenerate or push artifacts.
+push and only merged release PRs can regenerate or push artifacts. An optional
+manual dispatch uses the same generic generation path.
 
 ```yaml
 on:
@@ -169,15 +170,19 @@ on:
       - python/storage/pyproject.toml
       - hack/rhoai/*.py
       - .github/workflows/autogluon-rhoai-update.yml
+
+  workflow_dispatch:
 ```
 
 The `main` push has no path filter, so every push starts the workflow. A
 generated-only bot push reruns the workflow but exits successfully without a
 second commit because the outputs are already current. Release generation is
-available only from the merged `pull_request_target` event; direct pushes to
-`rhoai-*` do not start this workflow. The read-only `pull_request` test
-includes generated outputs so stale artifacts fail review without receiving
-write credentials.
+automatically available from the merged `pull_request_target` event; direct
+pushes to `rhoai-*` do not start this workflow. `workflow_dispatch` is retained
+as an operator recovery option, but follows the same generation job and has no
+dispatch-specific branch, approval, or token logic. The read-only `pull_request`
+test includes generated outputs so stale artifacts fail review without
+receiving write credentials.
 
 ### Event behavior
 
@@ -186,6 +191,7 @@ write credentials.
 | `push` on `main` | `github.ref_name` | `github.sha` | always |
 | merged `pull_request_target` | PR base branch | `merge_commit_sha` | merged only |
 | `pull_request` | no branch write | PR merge ref | read-only tests only |
+| `workflow_dispatch` | selected branch | `github.sha` | generic generation path |
 
 For `pull_request_target`:
 
@@ -346,6 +352,8 @@ artifacts before treating the change as released:
 - Pull-request test jobs cannot create App tokens or push branches.
 - Every push on `main` starts the workflow and regenerates the two outputs when
   they are stale.
+- `workflow_dispatch` uses the same generation job as automatic events, without
+  a dispatch-specific code path or approval gate.
 - Merged release PR runs against its merge SHA, not PR head.
 - Closed, unmerged release PR does nothing.
 - Direct push to `rhoai-*` does not start this workflow.
