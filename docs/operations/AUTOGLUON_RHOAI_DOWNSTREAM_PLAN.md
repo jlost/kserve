@@ -93,6 +93,7 @@ python/autogluonserver/uv.rhoai.lock
 python/autogluonserver/autogluon-all-requirements.txt
 python/autogluonserver/README.rhoai.md
 hack/rhoai/generate_autogluon.py
+hack/rhoai/test_generate_autogluon.py
 .github/workflows/autogluon-rhoai-update.yml
 Dockerfiles/autogluon.Dockerfile.konflux
 ```
@@ -132,10 +133,21 @@ Generator requirements:
 The generator must remain deterministic for identical project and local
 package inputs.
 
+Generator contract tests run with:
+
+```bash
+uv run hack/rhoai/test_generate_autogluon.py
+```
+
+They cover accepted checked-in inputs, credential rejection, artifact-host
+validation, hash enforcement, and stale-output detection without modifying the
+working tree in check mode.
+
 ## 5. Release-aware regeneration workflow
 
-Modify `.github/workflows/autogluon-rhoai-update.yml` to support three event
-classes:
+Modify `.github/workflows/autogluon-rhoai-update.yml` to support four event
+classes. Pull requests run read-only generator-contract tests; only merged
+release PRs and branch pushes can regenerate or push artifacts.
 
 ```yaml
 on:
@@ -162,12 +174,25 @@ on:
       - hack/rhoai/generate_autogluon.py
       - .github/workflows/autogluon-rhoai-update.yml
 
+  pull_request:
+    paths:
+      - python/autogluonserver/pyproject.rhoai.toml
+      - python/autogluonserver/uv.rhoai.lock
+      - python/autogluonserver/autogluon-all-requirements.txt
+      - python/kserve/pyproject.toml
+      - python/storage/pyproject.toml
+      - hack/rhoai/*.py
+      - .github/workflows/autogluon-rhoai-update.yml
+
   workflow_dispatch:
 ```
 
-Generated outputs are deliberately absent from `paths`; the bot commit cannot
-re-enter the workflow. Source code, README files, Dockerfile, license config,
-and `kserve-deps.env` are not generator inputs and do not trigger regeneration.
+Generated outputs are absent from mutating `push` and
+`pull_request_target` paths; the bot commit cannot re-enter the generation
+job. The read-only `pull_request` test includes generated outputs so stale
+artifacts fail review without receiving write credentials. Source code, README
+files, Dockerfile, license config, and `kserve-deps.env` are not generator
+inputs and do not trigger regeneration.
 
 ### Event behavior
 
@@ -176,6 +201,7 @@ and `kserve-deps.env` are not generator inputs and do not trigger regeneration.
 | `push` on `main` | `github.ref_name` | `github.sha` | always |
 | `push` on `rhoai-*` | `github.ref_name` | `github.sha` | always |
 | merged `pull_request_target` | PR base branch | `merge_commit_sha` | merged only |
+| `pull_request` | no branch write | PR merge ref | read-only tests only |
 | `workflow_dispatch` | selected branch | selected branch head | always |
 
 For `pull_request_target`:
@@ -193,7 +219,15 @@ concurrency:
   cancel-in-progress: false
 ```
 
-The job must:
+For `pull_request`:
+
+- run only the generator-contract tests;
+- grant no write permission or repository secret;
+- check out with `persist-credentials: false`; and
+- exclude the generation job explicitly so PRs cannot create App tokens or
+  push branches.
+
+The generation job must:
 
 1. Create the existing repository-scoped RHDS CI GitHub App token.
 2. Resolve target branch and checkout revision from the event type.
@@ -222,6 +256,10 @@ The workflow uses the existing pinned actions and secrets:
 - `actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065`;
 - `RHDS_CI_APP_CLIENT_ID`; and
 - `RHDS_CI_APP_PRIVATE_KEY`.
+
+The App token must request only `contents: write`. Checkout must use
+`persist-credentials: false`; the token is supplied only as an ephemeral Git
+fetch/push authorization header and never stored in `.git/config`.
 
 ## 6. Build and promotion semantics
 
@@ -261,8 +299,8 @@ No second dependency resolver may run in the Dockerfile.
 ## 8. Synchronization configuration
 
 ODH-to-KServe-main sync must ignore all RHOAI-owned files listed in §3,
-including the workflow, generator, Dockerfile, standalone project, and two
-generated outputs.
+including the workflow, generator, generator tests, Dockerfile, standalone
+project, and two generated outputs.
 
 KServe-main-to-release sync must ignore only:
 
@@ -291,10 +329,37 @@ model-controller remain owners of their prefetched-manifest subtrees.
 9. Confirm the release build uses the generated-artifact revision before
    promotion.
 
+### Post-merge validation (required)
+
+After implementation merge, validate both the workflow and resulting
+artifacts before treating the change as released:
+
+1. Inspect the `autogluon-rhoai-update.yml` run for the merge commit. Confirm
+   generator-contract tests pass, generation job has the expected event/branch,
+   and no PR test job received repository secrets.
+2. Confirm exactly one bot commit was created when artifacts changed, or a
+   successful no-op when they were already current. Confirm bot commit changes
+   only `uv.rhoai.lock` and `autogluon-all-requirements.txt`.
+3. At the bot commit, run:
+
+   ```bash
+   uv run hack/rhoai/generate_autogluon.py --check
+   ```
+
+   Require success and a clean diff for both generated files.
+4. Confirm the generated requirements contain hashes, exactly one AIPCC index,
+   no public PyPI artifact URLs, and the four required platform markers.
+5. Confirm the subsequent Konflux build uses the bot commit, then promote only
+   that generated-artifact revision.
+6. Repeat steps 1–5 for a controlled `rhoai-*` branch change, covering both a
+   merged release PR and direct release-branch push.
+
 ## 10. Acceptance criteria
 
 ### Workflow
 
+- Relevant pull requests run read-only generator-contract tests.
+- Pull-request test jobs cannot create App tokens or push branches.
 - Relevant input push on `main` regenerates the two outputs.
 - Relevant input push on `rhoai-*` regenerates the two outputs on that branch.
 - Merged release PR runs against its merge SHA, not PR head.
