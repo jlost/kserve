@@ -166,6 +166,7 @@ on:
       - python/storage/pyproject.toml
       - hack/rhoai/*.py
       - .github/workflows/autogluon-rhoai-update.yml
+      - kserve-deps.env
 
   pull_request_target:
     types: [closed]
@@ -178,6 +179,7 @@ on:
       - python/storage/pyproject.toml
       - hack/rhoai/*.py
       - .github/workflows/autogluon-rhoai-update.yml
+      - kserve-deps.env
 
   pull_request:
     paths:
@@ -188,6 +190,7 @@ on:
       - python/storage/pyproject.toml
       - hack/rhoai/*.py
       - .github/workflows/autogluon-rhoai-update.yml
+      - kserve-deps.env
 
   workflow_dispatch:
 ```
@@ -233,14 +236,16 @@ For `pull_request`:
 - grant no write permission or repository secret;
 - check out with `persist-credentials: false`; and
 - exclude the generation job explicitly so PRs cannot create App tokens or
-  push branches.
+  push branches; and
+- install only the workflow's trusted `uv` bootstrap version, then let the
+  generator reject a mismatch with the checked-out `kserve-deps.env`.
 
 The generation job must:
 
 1. Create the existing repository-scoped RHDS CI GitHub App token.
 2. Resolve target branch and checkout revision from the event type.
 3. Check out the full target history and create a local target branch.
-4. Install Python 3.12 and `uv==0.7.8`.
+4. Install Python 3.12 and the `UV_VERSION` pinned in `kserve-deps.env`.
 5. Run the generator.
 6. Stage only `uv.rhoai.lock` and
    `autogluon-all-requirements.txt`.
@@ -323,7 +328,8 @@ WVA and model-controller remain owners of their prefetched-manifest subtrees.
 ## 9. Rollout
 
 1. Update this plan and the KServe workflow together.
-2. Verify generator output and `--check` locally with `uv==0.7.8`.
+2. Verify generator output and `--check` locally with the `UV_VERSION` pinned
+   in `kserve-deps.env`.
 3. Validate workflow YAML and inspect event expressions.
 4. Run the existing AutoGluon PR build.
 5. Merge the KServe-main implementation with generated artifacts included.
