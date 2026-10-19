@@ -8,6 +8,7 @@ var kserveImageParamMap = map[string]string{
 	"kserve-storage-initializer":                       "RELATED_IMAGE_ODH_KSERVE_STORAGE_INITIALIZER_IMAGE",
 	"kserve-osc-storage-helper":                        "RELATED_IMAGE_OSC_STORAGE_HELPER_IMAGE",
 	"kserve-llm-d":                                     "RELATED_IMAGE_RHAII_VLLM_CUDA_IMAGE",
+	"kserve-llm-d-multi-port":                          "RELATED_IMAGE_RHAII_VLLM_CUDA_IMAGE",
 	"kserve-llm-d-nvidia-cuda":                         "RELATED_IMAGE_RHAII_VLLM_CUDA_IMAGE",
 	"kserve-llm-d-nvidia-cuda-fast-1":                  "RELATED_IMAGE_RHAII_VLLM_CUDA_FAST_1_IMAGE",
 	"kserve-llm-d-nvidia-cuda-fast-2":                  "RELATED_IMAGE_RHAII_VLLM_CUDA_FAST_2_IMAGE",
