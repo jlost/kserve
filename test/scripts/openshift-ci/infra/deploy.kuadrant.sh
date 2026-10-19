@@ -25,6 +25,9 @@ KUADRANT_READY_MAX_ATTEMPTS="${KUADRANT_READY_MAX_ATTEMPTS:-2}"
 KUADRANT_POST_DELETE_SLEEP="${KUADRANT_POST_DELETE_SLEEP:-15}"
 # Per-attempt timeout for oc wait on Kuadrant Ready (two attempts default; use 10m on very slow clusters).
 KUADRANT_READY_TIMEOUT="${KUADRANT_READY_TIMEOUT:-5m}"
+# Authorino performs a TokenReview followed by a SubjectAccessReview for authenticated requests.
+# The operator's 200ms default can expire before both API calls finish on CI clusters.
+KUADRANT_AUTH_SERVICE_TIMEOUT="${KUADRANT_AUTH_SERVICE_TIMEOUT:-1s}"
 # Authorino operand log level. Unset means: "info" when LLMInferenceService audit logging is enabled (the
 # identity fields are emitted at info level), otherwise "debug", the pre-existing CI setting. Set it to
 # force either, e.g. AUTHORINO_LOG_LEVEL=debug when diagnosing auth failures with audit logging on.
@@ -74,6 +77,10 @@ spec:
   name: ${RHCL_NAME}
   source: redhat-operators
   sourceNamespace: openshift-marketplace
+  config:
+    env:
+    - name: AUTH_SERVICE_TIMEOUT
+      value: "${KUADRANT_AUTH_SERVICE_TIMEOUT}"
 ---
 kind: OperatorGroup
 apiVersion: operators.coreos.com/v1
